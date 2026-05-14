@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Gestione Articoli e Categorie</title>
+<style>
+body { font-family: sans-serif; margin: 20px; max-width: 800px; }
+input, select, button, textarea { margin: 5px 0; width: 100%; padding: 5px; box-sizing: border-box; }
+table { border-collapse: collapse; margin-top: 20px; width: 100%; }
+td, th { border: 1px solid #ccc; padding: 8px; text-align: left; }
+h2 { margin-top: 30px; }
+</style>
+</head>
+<body>
+
+<h1>Gestione Articoli e Categorie</h1>
+
+<h2>Categorie</h2>
+<input type="text" id="newCategory" placeholder="Nome categoria">
+<button onclick="addCategory()">Aggiungi Categoria</button>
+<ul id="categoryList"></ul>
+
+<h2>Articoli</h2>
+<input type="text" id="articleTitle" placeholder="Titolo articolo">
+<textarea id="articleDesc" placeholder="Descrizione articolo"></textarea>
+<select id="categorySelect">
+  <option value="">-- Seleziona categoria --</option>
+</select>
+<button onclick="addArticle()">Aggiungi Articolo</button>
+
+<h2>Lista Articoli</h2>
+<table id="articleTable">
+  <thead>
+    <tr><th>Titolo</th><th>Descrizione</th><th>Categoria</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+let categories = [];
+let articles = [];
+
+// Aggiunge categoria
+function addCategory() {
+    const name = document.getElementById('newCategory').value.trim();
+    if (!name) return alert("Inserisci un nome categoria!");
+    if (categories.includes(name)) return alert("Categoria già esistente!");
+    categories.push(name);
+
+    // Aggiorna lista visiva
+    const li = document.createElement('li');
+    li.textContent = name;
+    document.getElementById('categoryList').appendChild(li);
+
+    // Aggiorna select
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    document.getElementById('categorySelect').appendChild(option);
+
+    document.getElementById('newCategory').value = '';
+}
+
+// Aggiunge articolo
+function addArticle() {
+    const title = document.getElementById('articleTitle').value.trim();
+    const desc = document.getElementById('articleDesc').value.trim();
+    const cat = document.getElementById('categorySelect').value;
+
+    if (!title || !cat) return alert("Inserisci titolo e seleziona categoria!");
+
+    const article = {title, desc, category: cat};
+    articles.push(article);
+
+    // Aggiorna tabella
+    const tbody = document.getElementById('articleTable').querySelector('tbody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${title}</td><td>${desc}</td><td>${cat}</td>`;
+    tbody.appendChild(tr);
+
+    // Reset campi
+    document.getElementById('articleTitle').value = '';
+    document.getElementById('articleDesc').value = '';
+    document.getElementById('categorySelect').value = '';
+}
+</script>
+
+</body>
+</html>
