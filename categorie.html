@@ -23,20 +23,19 @@
   <ul id="categoryList"></ul>
 </section>
 
+<!-- Script di gestione Supabase -->
 <script type="module">
-  // Import dal modulo centrale
-  import { fetchAll, insertRow, updateRow, deleteRow } from './supabase.js';
+  import { supabase } from './supabase.js';
 
   let categories = []; // memoria locale categorie
 
   // Carica tutte le categorie da Supabase
   async function loadCategories() {
-    try {
-      categories = await fetchAll('categorie');
-      renderCategories();
-    } catch (error) {
-      alert("Errore caricamento categorie: " + error.message);
-    }
+    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
+    if (error) return alert("Errore caricamento categorie: " + error.message);
+
+    categories = data || [];
+    renderCategories();
   }
 
   // Renderizza la lista categorie
@@ -53,14 +52,14 @@
         // Pulsante modifica
         const editBtn = document.createElement('button');
         editBtn.textContent = '✏️';
-        editBtn.style.marginLeft = '10px';
+        editBtn.className = 'small-btn';
         editBtn.onclick = () => editCategory(cat);
         li.appendChild(editBtn);
 
         // Pulsante cancella
         const delBtn = document.createElement('button');
         delBtn.textContent = '🗑️';
-        delBtn.style.marginLeft = '5px';
+        delBtn.className = 'small-btn';
         delBtn.onclick = () => deleteCategory(cat.id_categoria);
         li.appendChild(delBtn);
 
@@ -73,13 +72,11 @@
     const name = document.getElementById('newCategory').value.trim();
     if (!name) return alert("Inserisci nome categoria");
 
-    try {
-      await insertRow('categorie', { cat_descrizione: name });
-      document.getElementById('newCategory').value = '';
-      await loadCategories();
-    } catch (error) {
-      alert("Errore aggiunta categoria: " + error.message);
-    }
+    const { data, error } = await supabase.from('categorie').insert([{ cat_descrizione: name }]).select();
+    if (error) return alert("Errore aggiunta categoria: " + error.message);
+
+    document.getElementById('newCategory').value = '';
+    await loadCategories();
   }
 
   // Modifica categoria
@@ -87,27 +84,23 @@
     const newName = prompt("Modifica nome categoria:", cat.cat_descrizione);
     if (!newName || newName.trim() === cat.cat_descrizione) return;
 
-    try {
-      await updateRow('categorie', 'id_categoria', cat.id_categoria, { cat_descrizione: newName.trim() });
-      await loadCategories();
-    } catch (error) {
-      alert("Errore modifica categoria: " + error.message);
-    }
+    const { error } = await supabase.from('categorie').update({ cat_descrizione: newName.trim() }).eq('id_categoria', cat.id_categoria);
+    if (error) return alert("Errore modifica categoria: " + error.message);
+
+    await loadCategories();
   }
 
   // Cancella categoria
   async function deleteCategory(id) {
     if (!confirm("Sei sicuro di voler cancellare questa categoria?")) return;
 
-    try {
-      await deleteRow('categorie', 'id_categoria', id);
-      await loadCategories();
-    } catch (error) {
-      alert("Errore cancellazione categoria: " + error.message);
-    }
+    const { error } = await supabase.from('categorie').delete().eq('id_categoria', id);
+    if (error) return alert("Errore cancellazione categoria: " + error.message);
+
+    await loadCategories();
   }
 
-  // Filtro di ricerca in tempo reale
+  // Filtro in tempo reale
   function filterCategories() {
     const filter = document.getElementById('searchCategory').value;
     renderCategories(filter);
