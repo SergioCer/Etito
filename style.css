@@ -80,7 +80,7 @@ button:hover {
 }
 
 /* Pulsanti piccoli a fianco di liste */
-.icon-btn {
+.delete-btn {
     padding: 3px 6px;
     font-size: 0.9em;
     border-radius: 4px;
@@ -92,7 +92,7 @@ button:hover {
     cursor: pointer;
 }
 
-.icon-btn:hover {
+.delete-btn:hover {
     background-color: #FF6929;
 }
 
