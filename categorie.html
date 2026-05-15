@@ -86,10 +86,10 @@
 <script type="module">
   import { supabase } from './supabase.js';
   let categories = [];
-
-  
   let selectedLi = null;
-
+  let selectedId = null;
+  let editingInput = null; // nuovo: tiene traccia se stiamo modificando
+  
   // Carica tutte le categorie
   async function loadCategories() {
     const { data, error } = await supabase
@@ -123,7 +123,16 @@ function renderCategories(list) {
     }    
     
     // Selezione riga anche se clicco su li stesso
-    li.onclick = () => selectRow();
+    li.li.onclick = () => {
+  if(editingInput) {
+    // stiamo modificando: prima chiudi modifica
+    editingInput.blur(); 
+    // ritarda leggermente la selezione per assicurarsi che input.onblur finisca
+    setTimeout(() => selectRow(), 0);
+  } else {
+    selectRow();
+  }
+};ck = () => selectRow();
 
     // Descrizione
     const desc = document.createElement('span');
@@ -184,6 +193,9 @@ function renderCategories(list) {
 
   // Modifica campo
 async function editField(span, cat, field) {
+  if(editingInput) return; // evita di aprire più input contemporaneamente
+  editingInput = span;
+
   const input = document.createElement('input');
   input.type = 'text';
   input.value = cat[field] || '';
@@ -192,8 +204,7 @@ async function editField(span, cat, field) {
   input.focus();
   input.select();
 
-  // Salvataggio "intelligente" e gestione selezione successiva
-  const finishEdit = async (event) => {
+  const finishEdit = async () => {
     const newVal = input.value.trim();
     if(newVal !== (cat[field]||'')) {
       const { error } = await supabase.from('categorie')
@@ -201,24 +212,19 @@ async function editField(span, cat, field) {
         .eq('id_categoria', cat.id_categoria);
       if(error) return alert("Errore modifica: "+error.message);
     }
-    // Sostituisci input con span originale
     input.replaceWith(span);
-
-    // Se il click successivo era su un altro li della lista, selezionalo
-    if(event && event.target.tagName === 'LI') {
-      event.target.click(); // forza la selezione del nuovo li
-    }
+    editingInput = null;
   };
 
   input.onkeydown = async e => {
-    if(e.key === 'Enter') await finishEdit();
-    if(e.key === 'Escape') input.replaceWith(span);
+    if(e.key==='Enter') await finishEdit();
+    if(e.key==='Escape') {
+      input.replaceWith(span);
+      editingInput = null;
+    }
   };
 
-  input.onblur = async e => {
-    // Non bloccare il click: passiamo l'evento al gestore esterno
-    await finishEdit(e);
-  };
+  input.onblur = async () => await finishEdit();
 }
 
   // Eliminazione categoria
