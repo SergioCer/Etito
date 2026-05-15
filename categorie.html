@@ -122,9 +122,9 @@ function renderCategories(list) {
     desc.className = 'desc';
     desc.textContent = cat.cat_descrizione;
     desc.onclick = e => {
-      e.stopPropagation();      // non propagare il click al li
-      selectRow();              // seleziona la riga
-      editField(desc, cat, 'cat_descrizione'); // permette modifica
+      e.stopPropagation();
+      selectRow(); // seleziona sempre la riga
+      if(selectedLi === li) editField(desc, cat, 'cat_descrizione'); // modifica solo se selezionata
     };
     desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
     li.appendChild(desc);
@@ -135,8 +135,8 @@ function renderCategories(list) {
     note.textContent = cat.cat_note || '';
     note.onclick = e => {
       e.stopPropagation();
-      selectRow();              // seleziona la riga anche su Note
-      editField(note, cat, 'cat_note'); // permette modifica sempre
+      selectRow(); // seleziona sempre la riga
+      if(selectedLi === li) editField(note, cat, 'cat_note'); // modifica solo se selezionata
     };
     li.appendChild(note);
 
@@ -146,7 +146,7 @@ function renderCategories(list) {
     delBtn.textContent = '❌';
     delBtn.onclick = e => { 
       e.stopPropagation(); 
-      selectRow();             // seleziona la riga anche se clicco cancella
+      selectRow(); // seleziona la riga prima di cancellare
       deleteCategory(cat); 
     };
     li.appendChild(delBtn);
