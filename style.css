@@ -86,14 +86,14 @@ button:hover {
     border-radius: 4px;
     margin-left: 10px;
     width: auto; /* non full width */
-    background-color: #4CAF50;
+    background-color: #FF2929;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 .icon-btn:hover {
-    background-color: #45a049;
+    background-color: #FF6929;
 }
 
 /* ------------------------ TABELLE ------------------------ */
