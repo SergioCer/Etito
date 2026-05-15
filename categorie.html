@@ -121,11 +121,18 @@ function renderCategories(list) {
     const desc = document.createElement('span');
     desc.className = 'desc';
     desc.textContent = cat.cat_descrizione;
+    
     desc.onclick = e => {
-      e.stopPropagation();
-      selectRow(); // seleziona sempre la riga
-      if(selectedLi === li) editField(desc, cat, 'cat_descrizione'); // modifica solo se selezionata
+    e.stopPropagation();
+    if(selectedLi !== li) {
+    // La riga non era selezionata → seleziona e termina
+    selectRow();
+    return;
+    }
+    // La riga era già selezionata → modifica
+    editField(desc, cat, 'cat_descrizione');
     };
+    
     desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
     li.appendChild(desc);
 
@@ -134,9 +141,12 @@ function renderCategories(list) {
     note.className = 'note';
     note.textContent = cat.cat_note || '';
     note.onclick = e => {
-      e.stopPropagation();
-      selectRow(); // seleziona sempre la riga
-      if(selectedLi === li) editField(note, cat, 'cat_note'); // modifica solo se selezionata
+    e.stopPropagation();
+    if(selectedLi !== li) {
+    selectRow();
+    return;
+    }
+    editField(note, cat, 'cat_note');
     };
     li.appendChild(note);
 
