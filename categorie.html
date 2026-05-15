@@ -124,15 +124,15 @@ function renderCategories(list) {
     
     // Selezione riga anche se clicco su li stesso
     li.onclick = () => {
-  if(editingInput) {
+    if(editingInput) {
     // stiamo modificando: prima chiudi modifica
     editingInput.blur(); 
     // ritarda leggermente la selezione per assicurarsi che input.onblur finisca
     setTimeout(() => selectRow(), 0);
-  } else {
+    } else {
     selectRow();
-  }
-};ck = () => selectRow();
+    }
+    };
 
     // Descrizione
     const desc = document.createElement('span');
