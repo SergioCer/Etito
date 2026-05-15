@@ -149,8 +149,7 @@ function renderCategories(filter=''){
   ul.innerHTML='';
 
   const filtered = categories.filter(c =>
-    c.cat_descrizione.toLowerCase().includes(filter.toLowerCase()) ||
-    (c.cat_note && c.cat_note.toLowerCase().includes(filter.toLowerCase()))
+    c.cat_descrizione.toLowerCase().includes(filter.toLowerCase())
   );
 
   filtered.forEach(cat => {
@@ -166,7 +165,6 @@ function renderCategories(filter=''){
     const note = document.createElement('span');
     note.className='note';
     note.textContent = cat.cat_note || '';
-    note.onclick=()=> editField(note,cat,'cat_note');
     li.appendChild(note);
 
     const delBtn = document.createElement('button');
