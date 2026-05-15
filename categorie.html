@@ -9,12 +9,14 @@
 
 <h1>Gestione Categorie</h1>
 
+<p><a href="index.html">← Torna alla Home</a></p>
+
 <section id="categoriesSection">
   <h2>Categorie</h2>
 
   <!-- Input per aggiungere nuova categoria -->
   <input type="text" id="newCategory" placeholder="Nome categoria">
-  <button onclick="addCategory()">Aggiungi Categoria</button>
+  <button class="add-btn" onclick="addCategory()">Aggiungi</button>
 
   <!-- Filtro di ricerca -->
   <input type="text" id="searchCategory" placeholder="Cerca categoria..." oninput="filterCategories()">
@@ -23,13 +25,12 @@
   <ul id="categoryList"></ul>
 </section>
 
-<!-- Script di gestione Supabase -->
 <script type="module">
-  import { supabase } from './supabase.js';
+  import { supabase } from './supabase.js'; // usa il file centralizzato
 
-  let categories = []; // memoria locale categorie
+  let categories = [];
 
-  // Carica tutte le categorie da Supabase
+  // Carica tutte le categorie
   async function loadCategories() {
     const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
     if (error) return alert("Errore caricamento categorie: " + error.message);
@@ -38,7 +39,7 @@
     renderCategories();
   }
 
-  // Renderizza la lista categorie
+  // Renderizza lista categorie
   function renderCategories(filter = '') {
     const ul = document.getElementById('categoryList');
     ul.innerHTML = '';
@@ -47,19 +48,25 @@
       .filter(cat => cat.cat_descrizione.toLowerCase().includes(filter.toLowerCase()))
       .forEach(cat => {
         const li = document.createElement('li');
-        li.textContent = cat.cat_descrizione;
+
+        // contenuto principale
+        const span = document.createElement('span');
+        span.textContent = cat.cat_descrizione + (cat.note ? ` (${cat.note})` : '');
+        li.appendChild(span);
 
         // Pulsante modifica
         const editBtn = document.createElement('button');
         editBtn.textContent = '✏️';
-        editBtn.className = 'small-btn';
+        editBtn.title = "Modifica categoria";
+        editBtn.className = 'icon-btn';
         editBtn.onclick = () => editCategory(cat);
         li.appendChild(editBtn);
 
         // Pulsante cancella
         const delBtn = document.createElement('button');
         delBtn.textContent = '🗑️';
-        delBtn.className = 'small-btn';
+        delBtn.title = "Cancella categoria";
+        delBtn.className = 'icon-btn';
         delBtn.onclick = () => deleteCategory(cat.id_categoria);
         li.appendChild(delBtn);
 
@@ -67,7 +74,6 @@
       });
   }
 
-  // Aggiungi categoria
   async function addCategory() {
     const name = document.getElementById('newCategory').value.trim();
     if (!name) return alert("Inserisci nome categoria");
@@ -79,7 +85,6 @@
     await loadCategories();
   }
 
-  // Modifica categoria
   async function editCategory(cat) {
     const newName = prompt("Modifica nome categoria:", cat.cat_descrizione);
     if (!newName || newName.trim() === cat.cat_descrizione) return;
@@ -90,7 +95,6 @@
     await loadCategories();
   }
 
-  // Cancella categoria
   async function deleteCategory(id) {
     if (!confirm("Sei sicuro di voler cancellare questa categoria?")) return;
 
@@ -100,13 +104,11 @@
     await loadCategories();
   }
 
-  // Filtro in tempo reale
   function filterCategories() {
     const filter = document.getElementById('searchCategory').value;
     renderCategories(filter);
   }
 
-  // Caricamento iniziale
   loadCategories();
 </script>
 
