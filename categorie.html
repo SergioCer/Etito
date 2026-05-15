@@ -150,7 +150,17 @@
     await loadCategories();
   }
 
-  function filterCategories(){ const filter=document.getElementById('searchCategory').value; renderCategories(filter); }
+  function filterCategories(){
+  const filter = document.getElementById('searchCategory').value.toLowerCase();
+  const ul = document.getElementById('categoryList');
+  // Tutti gli <li> tranne l'ultimo (nuova categoria)
+  Array.from(ul.children).forEach((li, index) => {
+    if(index === ul.children.length - 1) return; // salta l'input nuova categoria
+    const desc = li.querySelector('span.desc').textContent.toLowerCase();
+    const note = li.querySelector('span.note').textContent.toLowerCase();
+    li.style.display = (desc.includes(filter) || note.includes(filter)) ? 'flex' : 'none';
+  });
+}
 
   loadCategories();
 </script>
