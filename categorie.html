@@ -183,33 +183,43 @@ function renderCategories(list) {
   });
 
   // Modifica campo
-  async function editField(span, cat, field) {
-    if(field==='cat_note' && cat.cat_note===null) return; 
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = cat[field] || '';
-    input.style.flexGrow = (field==='cat_descrizione')?'1':'2';
-    span.replaceWith(input);
-    input.focus();
-    input.select();
+async function editField(span, cat, field) {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = cat[field] || '';
+  input.style.flexGrow = (field==='cat_descrizione') ? '1' : '2';
+  span.replaceWith(input);
+  input.focus();
+  input.select();
 
-    input.onkeydown = async e => {
-      if(e.key==='Enter') await saveEdit(input, cat, field);
-      if(e.key==='Escape') input.replaceWith(span);
-    };
-    input.onblur = async () => await saveEdit(input, cat, field);
-  }
-
-  // Salvataggio modifica
-  async function saveEdit(input, cat, field) {
+  // Salvataggio "intelligente" e gestione selezione successiva
+  const finishEdit = async (event) => {
     const newVal = input.value.trim();
-    if(newVal === (cat[field]||'')) { await loadCategories(); return; }
-    const { error } = await supabase.from('categorie')
-      .update({ [field]: newVal })
-      .eq('id_categoria', cat.id_categoria);
-    if(error) return alert("Errore modifica: "+error.message);
-    await loadCategories();
-  }
+    if(newVal !== (cat[field]||'')) {
+      const { error } = await supabase.from('categorie')
+        .update({ [field]: newVal })
+        .eq('id_categoria', cat.id_categoria);
+      if(error) return alert("Errore modifica: "+error.message);
+    }
+    // Sostituisci input con span originale
+    input.replaceWith(span);
+
+    // Se il click successivo era su un altro li della lista, selezionalo
+    if(event && event.target.tagName === 'LI') {
+      event.target.click(); // forza la selezione del nuovo li
+    }
+  };
+
+  input.onkeydown = async e => {
+    if(e.key === 'Enter') await finishEdit();
+    if(e.key === 'Escape') input.replaceWith(span);
+  };
+
+  input.onblur = async e => {
+    // Non bloccare il click: passiamo l'evento al gestore esterno
+    await finishEdit(e);
+  };
+}
 
   // Eliminazione categoria
   async function deleteCategory(cat) {
