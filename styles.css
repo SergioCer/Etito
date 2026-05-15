@@ -1,34 +1,48 @@
+/* ------------------------ BASE ------------------------ */
 body { 
     font-family: sans-serif; 
     margin: 20px; 
     max-width: 900px; 
     background: #f4f4f9; 
+    color: #333;
 }
 
-h1, h2 { color: #333; }
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
 
+h2 {
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+/* ------------------------ SEZIONI ------------------------ */
 section { 
     padding: 15px 20px; 
     margin-bottom: 25px; 
     border-radius: 8px; 
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border-left: 6px solid #4CAF50; /* piccolo bordo verde per distinguere refresh */
+    border-left: 6px solid #4CAF50; /* bordo distintivo */
+    background-color: #fff; /* default per tutte le sezioni */
 }
 
+#categoriesSection { background-color: #fff9f0; border-left-color: #FFA500; }
+#articlesSection { background-color: #f0fff4; border-left-color: #4CAF50; }
+#listSection { background-color: #f0f4ff; border-left-color: #2196F3; }
+
+/* ------------------------ LINK ------------------------ */
 a {
-  text-decoration: none;
-  color: #4CAF50;
-  font-weight: bold;
+    text-decoration: none;
+    color: #4CAF50;
+    font-weight: bold;
 }
 
 a:hover {
-  color: #45a049;
+    color: #45a049;
 }
 
-#categoriesSection { background: #fff9f0; }
-#articlesSection { background: #f0fff4; }
-#listSection { background: #f0f4ff; }
-
+/* ------------------------ INPUT / BUTTON / SELECT ------------------------ */
 input, select, button, textarea { 
     margin: 8px 0; 
     padding: 8px; 
@@ -36,6 +50,7 @@ input, select, button, textarea {
     box-sizing: border-box; 
     border-radius: 5px; 
     border: 1px solid #ccc; 
+    font-size: 1em;
 }
 
 button { 
@@ -44,10 +59,20 @@ button {
     border: none; 
     cursor: pointer; 
     font-weight: bold; 
+    transition: background-color 0.2s;
 }
 
-button:hover { background-color: #45a049; }
+button:hover { 
+    background-color: #45a049; 
+}
 
+/* Pulsanti piccoli dentro liste */
+button.small-btn {
+    padding: 3px 6px;
+    font-size: 0.85em;
+}
+
+/* ------------------------ TABELLE ------------------------ */
 table { 
     border-collapse: collapse; 
     margin-top: 15px; 
@@ -62,8 +87,50 @@ td, th {
     text-align: left; 
 }
 
-tr:nth-child(even) { background-color: #f9f9f9; }
-tr:hover { background-color: #f1f1f1; }
+tr:nth-child(even) { 
+    background-color: #f9f9f9; 
+}
 
-ul { list-style: none; padding-left: 0; }
-li { background: #eee; margin: 3px 0; padding: 5px 8px; border-radius: 4px; }
+tr:hover { 
+    background-color: #f1f1f1; 
+}
+
+/* ------------------------ LISTE ------------------------ */
+ul { 
+    list-style: none; 
+    padding-left: 0; 
+}
+
+ul#categoryList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    margin: 5px 0;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    transition: background-color 0.2s;
+}
+
+ul#categoryList li:hover {
+    background-color: #f0e5d8;
+}
+
+ul#categoryList li button {
+    margin-left: 5px;
+}
+
+/* ------------------------ FILTRO / INPUT RICERCA ------------------------ */
+#searchCategory {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* ------------------------ RESPONSIVE ------------------------ */
+@media (max-width: 600px) {
+    body { margin: 10px; }
+    section { padding: 10px 15px; }
+    h1 { font-size: 1.6em; }
+    h2 { font-size: 1.2em; }
+}
