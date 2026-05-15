@@ -1,88 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <title>Gestione Articoli e Categorie</title>
 <style>
-body { font-family: sans-serif; margin: 20px; max-width: 800px; }
-input, select, button, textarea { margin: 5px 0; width: 100%; padding: 5px; box-sizing: border-box; }
-table { border-collapse: collapse; margin-top: 20px; width: 100%; }
-td, th { border: 1px solid #ccc; padding: 8px; text-align: left; }
-h2 { margin-top: 30px; }
+body { font-family: sans-serif; margin: 20px; max-width: 900px; background: #f4f4f9; }
+h1, h2 { color: #333; }
+section { padding: 15px 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+#categoriesSection { background: #fff9f0; }
+#articlesSection { background: #f0fff4; }
+#listSection { background: #f0f4ff; }
+input, select, button, textarea { margin: 8px 0; padding: 8px; width: 100%; box-sizing: border-box; border-radius: 5px; border: 1px solid #ccc; }
+button { background-color: #4CAF50; color: white; border: none; cursor: pointer; font-weight: bold; }
+button:hover { background-color: #45a049; }
+table { border-collapse: collapse; margin-top: 15px; width: 100%; border-radius: 5px; overflow: hidden; }
+td, th { border: 1px solid #ddd; padding: 10px; text-align: left; }
+tr:nth-child(even) { background-color: #f9f9f9; }
+tr:hover { background-color: #f1f1f1; }
+ul { list-style: none; padding-left: 0; }
+li { background: #eee; margin: 3px 0; padding: 5px 8px; border-radius: 4px; }
 </style>
 </head>
 <body>
 
 <h1>Gestione Articoli e Categorie</h1>
 
+<section id="categoriesSection">
 <h2>Categorie</h2>
 <input type="text" id="newCategory" placeholder="Nome categoria">
 <button onclick="addCategory()">Aggiungi Categoria</button>
 <ul id="categoryList"></ul>
+</section>
 
+<section id="articlesSection">
 <h2>Articoli</h2>
-<input type="text" id="articleTitle" placeholder="Titolo articolo">
-<textarea id="articleDesc" placeholder="Descrizione articolo"></textarea>
+<input type="text" id="articleDesc" placeholder="Descrizione articolo">
 <select id="categorySelect">
   <option value="">-- Seleziona categoria --</option>
 </select>
 <button onclick="addArticle()">Aggiungi Articolo</button>
+</section>
 
+<section id="listSection">
 <h2>Lista Articoli</h2>
 <table id="articleTable">
   <thead>
-    <tr><th>Titolo</th><th>Descrizione</th><th>Categoria</th></tr>
+    <tr><th>ID Articolo</th><th>Descrizione</th><th>Categoria</th></tr>
   </thead>
   <tbody></tbody>
 </table>
+</section>
 
-<script>
-let categories = [];
-let articles = [];
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-// Aggiunge categoria
-function addCategory() {
-    const name = document.getElementById('newCategory').value.trim();
-    if (!name) return alert("Inserisci un nome categoria!");
-    if (categories.includes(name)) return alert("Categoria già esistente!");
-    categories.push(name);
+  const supabaseUrl = 'https://lvtywxtunfmnkmwowxnh.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2dHl3eHR1bmZtbmttd293eG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3Njg4MDcsImV4cCI6MjA5NDM0NDgwN30.qq1qPdUxYFcqnv4cA50JMyTBAA5XWKxruL6HEE4-ACM';
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Aggiorna lista visiva
-    const li = document.createElement('li');
-    li.textContent = name;
-    document.getElementById('categoryList').appendChild(li);
+  async function loadCategories() {
+      const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
+      if (error) return alert("Errore caricamento categorie: " + error.message);
 
-    // Aggiorna select
-    const option = document.createElement('option');
-    option.value = name;
-    option.textContent = name;
-    document.getElementById('categorySelect').appendChild(option);
+      const ul = document.getElementById('categoryList');
+      const select = document.getElementById('categorySelect');
+      ul.innerHTML = '';
+      select.innerHTML = '<option value="">-- Seleziona categoria --</option>';
 
-    document.getElementById('newCategory').value = '';
-}
+      data.forEach(cat => {
+          const li = document.createElement('li');
+          li.textContent = cat.cat_descrizione;
+          ul.appendChild(li);
 
-// Aggiunge articolo
-function addArticle() {
-    const title = document.getElementById('articleTitle').value.trim();
-    const desc = document.getElementById('articleDesc').value.trim();
-    const cat = document.getElementById('categorySelect').value;
+          const option = document.createElement('option');
+          option.value = cat.id_categoria;
+          option.textContent = cat.cat_descrizione;
+          select.appendChild(option);
+      });
+  }
 
-    if (!title || !cat) return alert("Inserisci titolo e seleziona categoria!");
+  async function addCategory() {
+      const name = document.getElementById('newCategory').value.trim();
+      if (!name) return alert("Inserisci nome categoria");
+      const { data, error } = await supabase.from('categorie').insert([{ cat_descrizione: name }]).select();
+      if (error) return alert("Errore aggiunta categoria: " + error.message);
+      document.getElementById('newCategory').value = '';
+      await loadCategories();
+  }
 
-    const article = {title, desc, category: cat};
-    articles.push(article);
+  async function loadArticles() {
+      const { data, error } = await supabase.from('articoli').select(`id_articolo, art_descrizione, id_categorie, categorie(cat_descrizione)`).order('id_articolo', { ascending: true });
+      if (error) return alert("Errore caricamento articoli: " + error.message);
 
-    // Aggiorna tabella
-    const tbody = document.getElementById('articleTable').querySelector('tbody');
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${title}</td><td>${desc}</td><td>${cat}</td>`;
-    tbody.appendChild(tr);
+      const tbody = document.getElementById('articleTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      if (!data || data.length === 0) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td colspan="3" style="text-align:center;">Nessun articolo presente</td>`;
+          tbody.appendChild(tr);
+          return;
+      }
 
-    // Reset campi
-    document.getElementById('articleTitle').value = '';
-    document.getElementById('articleDesc').value = '';
-    document.getElementById('categorySelect').value = '';
-}
+      data.forEach(a => {
+          const tr = document.createElement('tr');
+          const categoryName = a.categorie ? a.categorie.cat_descrizione : '';
+          tr.innerHTML = `<td>${a.id_articolo}</td><td>${a.art_descrizione || ''}</td><td>${categoryName}</td>`;
+          tbody.appendChild(tr);
+      });
+  }
+
+  async function addArticle() {
+      const desc = document.getElementById('articleDesc').value.trim();
+      const catId = document.getElementById('categorySelect').value;
+      if (!desc || !catId) return alert("Inserisci descrizione e seleziona categoria");
+
+      const { data, error } = await supabase.from('articoli').insert([{ art_descrizione: desc, id_categorie: parseInt(catId) }]).select();
+      if (error) return alert("Errore aggiunta articolo: " + error.message);
+
+      document.getElementById('articleDesc').value = '';
+      document.getElementById('categorySelect').value = '';
+      await loadArticles();
+  }
+
+  loadCategories();
+  loadArticles();
 </script>
 
 </body>
