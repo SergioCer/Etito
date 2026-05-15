@@ -2,132 +2,160 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Gestione Categorie</title>
+<title>Categorie</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Gestione Categorie</h1>
-
 <section id="categoriesSection">
   <h2>Categorie</h2>
 
-  <!-- Input per aggiungere nuova categoria -->
-  <input type="text" id="newCategory" placeholder="Nome categoria">
-  <button onclick="addCategory()">Aggiungi Categoria</button>
-
   <!-- Filtro di ricerca -->
-  <input type="text" id="searchCategory" placeholder="Cerca categoria...">
+  <input type="text" id="searchCategory" placeholder="Cerca categoria..." oninput="filterCategories()">
 
   <!-- Lista categorie -->
   <ul id="categoryList"></ul>
 </section>
 
-<!-- Ritorno alla home -->
-<p><a href="index.html">← Torna alla Home</a></p>
+<p><a href="index.html">← Torna alla home</a></p>
 
 <script type="module">
-import { supabase } from './supabase.js';
+  import { supabase } from './supabase.js';
 
-let categories = []; // memoria locale categorie
+  let categories = [];
 
-// Carica tutte le categorie da Supabase
-async function loadCategories() {
-    const { data, error } = await supabase
-        .from('categorie')
-        .select('*')
-        .order('id_categoria', { ascending: true });
+  // Carica tutte le categorie da Supabase
+  async function loadCategories() {
+    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
     if (error) return alert("Errore caricamento categorie: " + error.message);
 
     categories = data || [];
     renderCategories();
-}
+  }
 
-// Renderizza la lista categorie
-function renderCategories(filter = '') {
+  function renderCategories(filter = '') {
     const ul = document.getElementById('categoryList');
     ul.innerHTML = '';
 
+    // Lista categorie esistenti
     categories
-        .filter(cat => cat.cat_descrizione.toLowerCase().includes(filter.toLowerCase()))
-        .forEach(cat => {
-            const li = document.createElement('li');
+      .filter(cat => cat.cat_descrizione.toLowerCase().includes(filter.toLowerCase()))
+      .forEach(cat => {
+        const li = document.createElement('li');
 
-            // Testo della categoria
-            const textDiv = document.createElement('div');
-            textDiv.style.flex = '1';
-            textDiv.textContent = cat.cat_descrizione;
-            li.appendChild(textDiv);
+        const span = document.createElement('span');
+        span.textContent = cat.cat_descrizione;
+        span.style.flexGrow = '1';
+        span.style.cursor = 'pointer';
 
-            // Pulsante modifica
-            const editBtn = document.createElement('button');
-            editBtn.textContent = '✏️';
-            editBtn.classList.add('icon-btn');
-            editBtn.title = 'Modifica categoria';
-            editBtn.onclick = () => editCategory(cat);
-            li.appendChild(editBtn);
+        // Click: modifica inline
+        span.onclick = () => editCategoryInline(span, cat);
 
-            // Pulsante cancella
-            const delBtn = document.createElement('button');
-            delBtn.textContent = '🗑️';
-            delBtn.classList.add('icon-btn');
-            delBtn.title = 'Elimina categoria';
-            delBtn.onclick = () => deleteCategory(cat.id_categoria);
-            li.appendChild(delBtn);
+        // Doppio click: apri articoli filtrati
+        span.ondblclick = () => {
+          window.location.href = `articoli.html?categoria=${cat.id_categoria}`;
+        };
 
-            ul.appendChild(li);
-        });
-}
+        li.appendChild(span);
 
-// Aggiungi categoria
-async function addCategory() {
-    const name = document.getElementById('newCategory').value.trim();
-    if (!name) return alert("Inserisci nome categoria");
+        // Pulsante cancella rosso, disabilitato se ci sono articoli
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '❌';
+        delBtn.className = 'icon-btn';
+        delBtn.style.backgroundColor = 'red';
+        delBtn.style.marginLeft = '10px';
+        delBtn.onclick = async () => deleteCategory(cat);
+        li.appendChild(delBtn);
 
-    const { data, error } = await supabase
-        .from('categorie')
-        .insert([{ cat_descrizione: name }])
-        .select();
+        ul.appendChild(li);
+      });
+
+    // Riga finale per aggiungere nuova categoria inline
+    const newLi = document.createElement('li');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Nuova categoria...';
+    input.onkeydown = async (e) => {
+      if (e.key === 'Enter') {
+        await addCategory(input.value);
+        input.value = '';
+      }
+    };
+    input.onblur = async () => {
+      if (input.value.trim()) {
+        await addCategory(input.value);
+        input.value = '';
+      }
+    };
+    newLi.appendChild(input);
+    ul.appendChild(newLi);
+  }
+
+  // Aggiungi nuova categoria
+  async function addCategory(name) {
+    name = name.trim();
+    if (!name) return;
+
+    const { data, error } = await supabase.from('categorie').insert([{ cat_descrizione: name }]).select();
     if (error) return alert("Errore aggiunta categoria: " + error.message);
-
-    document.getElementById('newCategory').value = '';
     await loadCategories();
-}
+  }
 
-// Modifica categoria
-async function editCategory(cat) {
-    const newName = prompt("Modifica nome categoria:", cat.cat_descrizione);
-    if (!newName || newName.trim() === cat.cat_descrizione) return;
+  // Modifica inline
+  function editCategoryInline(span, cat) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = cat.cat_descrizione;
+    input.style.flexGrow = '1';
+    span.replaceWith(input);
+    input.focus();
 
-    const { error } = await supabase
-        .from('categorie')
-        .update({ cat_descrizione: newName.trim() })
-        .eq('id_categoria', cat.id_categoria);
+    input.onkeydown = async (e) => {
+      if (e.key === 'Enter') await saveEdit(input, cat);
+      if (e.key === 'Escape') input.replaceWith(span);
+    };
+
+    input.onblur = async () => await saveEdit(input, cat);
+  }
+
+  async function saveEdit(input, cat) {
+    const newName = input.value.trim();
+    if (!newName || newName === cat.cat_descrizione) {
+      input.replaceWith(document.createTextNode(cat.cat_descrizione));
+      await loadCategories();
+      return;
+    }
+
+    const { error } = await supabase.from('categorie').update({ cat_descrizione: newName }).eq('id_categoria', cat.id_categoria);
     if (error) return alert("Errore modifica categoria: " + error.message);
-
     await loadCategories();
-}
+  }
 
-// Cancella categoria
-async function deleteCategory(id) {
-    if (!confirm("Sei sicuro di voler cancellare questa categoria?")) return;
+  // Elimina categoria (disabilitato se articoli collegati)
+  async function deleteCategory(cat) {
+    // controlla articoli collegati
+    const { data: articoli, error: err } = await supabase.from('articoli').select('*').eq('id_categorie', cat.id_categoria);
+    if (err) return alert("Errore controllo articoli: " + err.message);
 
-    const { error } = await supabase
-        .from('categorie')
-        .delete()
-        .eq('id_categoria', id);
+    if (articoli.length > 0) {
+      alert("Impossibile eliminare: esistono articoli in questa categoria.");
+      return;
+    }
+
+    if (!confirm(`Eliminare la categoria "${cat.cat_descrizione}"?`)) return;
+
+    const { error } = await supabase.from('categorie').delete().eq('id_categoria', cat.id_categoria);
     if (error) return alert("Errore cancellazione categoria: " + error.message);
 
     await loadCategories();
-}
+  }
 
-// Filtro di ricerca in tempo reale
-document.getElementById('searchCategory').addEventListener('input', (e) => {
-    renderCategories(e.target.value);
-});
+  function filterCategories() {
+    const filter = document.getElementById('searchCategory').value;
+    renderCategories(filter);
+  }
 
-// Caricamento iniziale
-loadCategories();
+  loadCategories();
 </script>
 
 </body>
