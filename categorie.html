@@ -10,41 +10,107 @@
 <h1>Gestione Categorie</h1>
 
 <section id="categoriesSection">
-<h2>Categorie</h2>
-<input type="text" id="newCategory" placeholder="Nome categoria">
-<button onclick="addCategory()">Aggiungi Categoria</button>
-<ul id="categoryList"></ul>
+  <h2>Categorie</h2>
+
+  <!-- Input per aggiungere nuova categoria -->
+  <input type="text" id="newCategory" placeholder="Nome categoria">
+  <button onclick="addCategory()">Aggiungi Categoria</button>
+
+  <!-- Filtro di ricerca -->
+  <input type="text" id="searchCategory" placeholder="Cerca categoria..." oninput="filterCategories()">
+
+  <!-- Lista categorie -->
+  <ul id="categoryList"></ul>
 </section>
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
+  // Connessione Supabase
   const supabaseUrl = 'https://lvtywxtunfmnkmwowxnh.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2dHl3eHR1bmZtbmttd293eG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3Njg4MDcsImV4cCI6MjA5NDM0NDgwN30.qq1qPdUxYFcqnv4cA50JMyTBAA5XWKxruL6HEE4-ACM';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  async function loadCategories() {
-      const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
-      if (error) return alert("Errore caricamento categorie: " + error.message);
+  let categories = []; // memoria locale categorie
 
-      const ul = document.getElementById('categoryList');
-      ul.innerHTML = '';
-      data.forEach(cat => {
-          const li = document.createElement('li');
-          li.textContent = cat.cat_descrizione;
-          ul.appendChild(li);
+  // Carica tutte le categorie da Supabase
+  async function loadCategories() {
+    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
+    if (error) return alert("Errore caricamento categorie: " + error.message);
+
+    categories = data || [];
+    renderCategories();
+  }
+
+  // Renderizza la lista categorie
+  function renderCategories(filter = '') {
+    const ul = document.getElementById('categoryList');
+    ul.innerHTML = '';
+
+    categories
+      .filter(cat => cat.cat_descrizione.toLowerCase().includes(filter.toLowerCase()))
+      .forEach(cat => {
+        const li = document.createElement('li');
+        li.textContent = cat.cat_descrizione;
+
+        // Pulsante modifica
+        const editBtn = document.createElement('button');
+        editBtn.textContent = '✏️';
+        editBtn.style.marginLeft = '10px';
+        editBtn.onclick = () => editCategory(cat);
+        li.appendChild(editBtn);
+
+        // Pulsante cancella
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '🗑️';
+        delBtn.style.marginLeft = '5px';
+        delBtn.onclick = () => deleteCategory(cat.id_categoria);
+        li.appendChild(delBtn);
+
+        ul.appendChild(li);
       });
   }
 
+  // Aggiungi categoria
   async function addCategory() {
-      const name = document.getElementById('newCategory').value.trim();
-      if (!name) return alert("Inserisci nome categoria");
-      const { data, error } = await supabase.from('categorie').insert([{ cat_descrizione: name }]).select();
-      if (error) return alert("Errore aggiunta categoria: " + error.message);
-      document.getElementById('newCategory').value = '';
-      await loadCategories();
+    const name = document.getElementById('newCategory').value.trim();
+    if (!name) return alert("Inserisci nome categoria");
+
+    const { data, error } = await supabase.from('categorie').insert([{ cat_descrizione: name }]).select();
+    if (error) return alert("Errore aggiunta categoria: " + error.message);
+
+    document.getElementById('newCategory').value = '';
+    await loadCategories();
   }
 
+  // Modifica categoria
+  async function editCategory(cat) {
+    const newName = prompt("Modifica nome categoria:", cat.cat_descrizione);
+    if (!newName || newName.trim() === cat.cat_descrizione) return;
+
+    const { error } = await supabase.from('categorie').update({ cat_descrizione: newName.trim() }).eq('id_categoria', cat.id_categoria);
+    if (error) return alert("Errore modifica categoria: " + error.message);
+
+    await loadCategories();
+  }
+
+  // Cancella categoria
+  async function deleteCategory(id) {
+    if (!confirm("Sei sicuro di voler cancellare questa categoria?")) return;
+
+    const { error } = await supabase.from('categorie').delete().eq('id_categoria', id);
+    if (error) return alert("Errore cancellazione categoria: " + error.message);
+
+    await loadCategories();
+  }
+
+  // Filtro di ricerca in tempo reale
+  function filterCategories() {
+    const filter = document.getElementById('searchCategory').value;
+    renderCategories(filter);
+  }
+
+  // Caricamento iniziale
   loadCategories();
 </script>
 
