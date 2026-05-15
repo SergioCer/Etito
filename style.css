@@ -189,8 +189,23 @@ ul#categoryList li span.note {
     min-width: 50px; /* garantisce area cliccabile anche se vuoto */
 }
 
-ul#categoryList li span.desc { flex:1; }
-ul#categoryList li span.note { flex:2; margin: 0 10px; }
+ul#categoryList li span.desc {
+    flex: 1;
+    cursor: pointer;
+    user-select: none;
+    min-width: 50px;
+    min-height: 1em;
+    display: inline-block;
+}
+ul#categoryList li span.note {
+    flex: 2;
+    margin: 0 10px;
+    cursor: pointer;       /* mostra che è cliccabile */
+    user-select: none;     /* previene selezione accidentale del testo */
+    min-width: 50px;       /* assicura larghezza minima anche se vuoto */
+    min-height: 1em;       /* assicura altezza cliccabile */
+    display: inline-block; /* rende lo span rilevabile al click */
+}
 
 ul#categoryList li button {
     margin-left: 5px;
