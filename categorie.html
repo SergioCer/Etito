@@ -50,21 +50,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 10px;
+    padding: 3px 8px; /* meno spazio verticale */
     border-bottom: 1px solid #ddd;
   }
 
-  #categoryList li span.desc {
-    flex-grow: 1;
+  #categoryList li span.desc,
+  #categoryList li span.note {
     cursor: pointer;
   }
 
-  #categoryList li span.note {
-    flex-grow: 2;
-    margin-left: 10px;
-    margin-right: 10px;
-    cursor: pointer;
-  }
+  #categoryList li span.desc { flex-grow: 1; }
+  #categoryList li span.note { flex-grow: 2; margin-left:10px; margin-right:10px; }
 
   .delete-btn {
     background-color: red;
@@ -74,7 +70,8 @@
     cursor: pointer;
     padding: 3px 6px;
     font-size: 0.9em;
-    width: 30px; /* modificato da 50px */
+    width: 30px;
+    margin-left: auto; /* allinea a destra */
     text-align: center;
   }
 
@@ -87,43 +84,35 @@
     font-weight: bold;
     background-color: #eee;
     display: flex;
-    padding: 6px 10px;
+    padding: 3px 8px;
     position: sticky;
-    top: 100px; /* sotto topBar + searchWrapper */
+    top: 100px;
     z-index: 998;
   }
 
-  #categoryHeader span {
-    display: inline-block;
-  }
-
   #categoryHeader span.desc { flex:1; }
-  #categoryHeader span.note { flex:2; }
-  #categoryHeader span.del { width:30px; text-align:center; } /* allineata a delete-btn */
+  #categoryHeader span.note { flex:2; margin-left:10px; margin-right:10px; }
+  #categoryHeader span.del { width:30px; text-align:right; margin-left:auto; }
 </style>
 </head>
 <body>
 
-<!-- Barra fissa in alto -->
 <div id="topBar">
   <a href="index.html">← Home</a>
   <h2>Categorie</h2>
   <div style="width:50px;"></div>
 </div>
 
-<!-- Barra ricerca -->
 <div id="searchWrapper">
   <input type="text" id="searchCategory" placeholder="Cerca categoria...">
 </div>
 
-<!-- Intestazione colonne -->
 <div id="categoryHeader">
   <span class="desc">Descrizione</span>
   <span class="note">Note</span>
   <span class="del">Cancella</span>
 </div>
 
-<!-- Lista categorie -->
 <ul id="categoryList"></ul>
 
 <script type="module">
@@ -144,22 +133,19 @@
     list.forEach(cat => {
       const li = document.createElement('li');
 
-      // Descrizione
       const desc = document.createElement('span'); 
       desc.className='desc';
       desc.textContent = cat.cat_descrizione;
-      desc.onclick = () => editField(desc, cat, 'cat_descrizione');
+      desc.addEventListener('click', e => { e.stopPropagation(); editField(desc, cat, 'cat_descrizione'); });
       desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
       li.appendChild(desc);
 
-      // Note
       const note = document.createElement('span'); 
       note.className='note';
-      note.textContent = cat.cat_note || ''; // anche null
-      note.onclick = () => editField(note, cat, 'cat_note'); // clic sempre funziona
+      note.textContent = cat.cat_note || '';
+      note.addEventListener('click', e => { e.stopPropagation(); editField(note, cat, 'cat_note'); });
       li.appendChild(note);
 
-      // Pulsante cancella
       const delBtn = document.createElement('button'); 
       delBtn.className = 'delete-btn';
       delBtn.textContent = '❌';
@@ -170,8 +156,8 @@
     });
   }
 
-  // Filtra le categorie live
   const searchInput = document.getElementById('searchCategory');
+  searchInput.focus(); // cursore all'apertura
   searchInput.addEventListener('input', () => {
     const filter = searchInput.value.toLowerCase();
     const filtered = categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter));
@@ -180,8 +166,8 @@
 
   async function editField(span, cat, field){
     const input = document.createElement('input');
-    input.type = 'text'; 
-    input.value = cat[field] || ''; 
+    input.type='text';
+    input.value = cat[field] || '';
     input.style.flexGrow = (field==='cat_descrizione') ? '1' : '2';
     span.replaceWith(input);
     input.focus();
