@@ -33,7 +33,7 @@
   /* Ricerca fissa sotto barra */
   #searchWrapper {
     position: sticky;
-    top: 52px; /* sotto barra topBar */
+    top: 52px;
     background: #f4f4f9;
     padding: 5px 20px;
     border-bottom: 1px solid #ccc;
@@ -54,7 +54,7 @@
     display: flex;
     padding: 3px 8px;
     position: sticky;
-    top: 88px; /* sotto barra + ricerca */
+    top: 88px; 
     z-index: 998;
   }
 
@@ -68,6 +68,11 @@
     align-items: center;
     padding: 1px 6px;
     border-bottom: 1px solid #ddd;
+    cursor: pointer;
+  }
+
+  #categoryList li.selected {
+    background-color: #d0f0d0; /* evidenza riga selezionata */
   }
 
   #categoryList li span.desc,
@@ -86,7 +91,7 @@
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9em;
-    flex: 0 0 30px; /* larghezza fissa */
+    flex: 0 0 30px; 
     margin-left: auto;
     padding: 2px 4px;
     display: flex;
@@ -102,30 +107,27 @@
 </head>
 <body>
 
-<!-- Barra Top -->
 <div id="topBar">
   <a href="index.html">← Home</a>
   <h2>Categorie</h2>
 </div>
 
-<!-- Ricerca -->
 <div id="searchWrapper">
   <input type="text" id="searchCategory" placeholder="Cerca categoria...">
 </div>
 
-<!-- Header lista -->
 <div id="categoryHeader">
   <span class="desc">Descrizione</span>
   <span class="note">Note</span>
   <span class="del">Cancella</span>
 </div>
 
-<!-- Lista categorie -->
 <ul id="categoryList"></ul>
 
 <script type="module">
   import { supabase } from './supabase.js';
   let categories = [];
+  let selectedLi = null;
 
   async function loadCategories() {
     const { data, error } = await supabase
@@ -144,11 +146,21 @@
     list.forEach(cat => {
       const li = document.createElement('li');
 
+      // Selezione riga
+      li.onclick = () => {
+        if(selectedLi) selectedLi.classList.remove('selected');
+        selectedLi = li;
+        li.classList.add('selected');
+      };
+
       // Descrizione
       const desc = document.createElement('span');
       desc.className = 'desc';
       desc.textContent = cat.cat_descrizione;
-      desc.onclick = () => editField(desc, cat, 'cat_descrizione');
+      desc.onclick = e => {
+        e.stopPropagation();
+        if(selectedLi === li) editField(desc, cat, 'cat_descrizione');
+      };
       desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
       li.appendChild(desc);
 
@@ -156,8 +168,11 @@
       const note = document.createElement('span');
       note.className = 'note';
       note.textContent = cat.cat_note || '';
-      if(cat.cat_note !== null){
-        note.onclick = () => editField(note, cat, 'cat_note');
+      if(cat.cat_note !== null) {
+        note.onclick = e => {
+          e.stopPropagation();
+          if(selectedLi === li) editField(note, cat, 'cat_note');
+        };
       }
       li.appendChild(note);
 
@@ -165,7 +180,7 @@
       const delBtn = document.createElement('button');
       delBtn.className = 'delete-btn';
       delBtn.textContent = '❌';
-      delBtn.onclick = () => deleteCategory(cat);
+      delBtn.onclick = e => { e.stopPropagation(); deleteCategory(cat); };
       li.appendChild(delBtn);
 
       ul.appendChild(li);
@@ -182,7 +197,7 @@
   });
 
   async function editField(span, cat, field) {
-    if(field==='cat_note' && cat.cat_note===null) return; // non modificabile se null
+    if(field==='cat_note' && cat.cat_note===null) return; 
     const input = document.createElement('input');
     input.type = 'text';
     input.value = cat[field] || '';
