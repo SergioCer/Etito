@@ -99,54 +99,58 @@
     renderCategories(categories);
   }
 
-  // Rendering lista
-  function renderCategories(list) {
-    const ul = document.getElementById('categoryList');
-    ul.innerHTML = '';
+// Rendering lista
+function renderCategories(list) {
+  const ul = document.getElementById('categoryList');
+  ul.innerHTML = '';
 
-    list.forEach(cat => {
-      const li = document.createElement('li');
+  list.forEach(cat => {
+    const li = document.createElement('li');
 
-      // Selezione riga
-      li.onclick = () => {
-        if(selectedLi) selectedLi.classList.remove('selected');
-        selectedLi = li;
-        li.classList.add('selected');
-      };
+    // Click su tutta la riga: seleziona la riga
+    const selectRow = () => {
+      if(selectedLi) selectedLi.classList.remove('selected');
+      selectedLi = li;
+      li.classList.add('selected');
+    };
+    li.onclick = selectRow;
 
-      // Descrizione
-      const desc = document.createElement('span');
-      desc.className = 'desc';
-      desc.textContent = cat.cat_descrizione;
-      desc.onclick = e => {
+    // Descrizione
+    const desc = document.createElement('span');
+    desc.className = 'desc';
+    desc.textContent = cat.cat_descrizione;
+
+    desc.onclick = e => {
+      e.stopPropagation();       // non propagare il click al li
+      selectRow();               // prima seleziona la riga
+      editField(desc, cat, 'cat_descrizione'); // poi permetti modifica
+    };
+    desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
+    li.appendChild(desc);
+
+    // Note
+    const note = document.createElement('span');
+    note.className = 'note';
+    note.textContent = cat.cat_note || '';
+    if(cat.cat_note !== null) {
+      note.onclick = e => {
         e.stopPropagation();
-        if(selectedLi === li) editField(desc, cat, 'cat_descrizione');
+        selectRow();             // prima seleziona la riga
+        editField(note, cat, 'cat_note');
       };
-      desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
-      li.appendChild(desc);
+    }
+    li.appendChild(note);
 
-      // Note
-      const note = document.createElement('span');
-      note.className = 'note';
-      note.textContent = cat.cat_note || '';
-      if(cat.cat_note !== null) {
-        note.onclick = e => {
-          e.stopPropagation();
-          if(selectedLi === li) editField(note, cat, 'cat_note');
-        };
-      }
-      li.appendChild(note);
+    // Pulsante Cancella
+    const delBtn = document.createElement('button');
+    delBtn.className = 'delete-btn';
+    delBtn.textContent = '❌';
+    delBtn.onclick = e => { e.stopPropagation(); deleteCategory(cat); };
+    li.appendChild(delBtn);
 
-      // Pulsante Cancella
-      const delBtn = document.createElement('button');
-      delBtn.className = 'delete-btn';
-      delBtn.textContent = '❌';
-      delBtn.onclick = e => { e.stopPropagation(); deleteCategory(cat); };
-      li.appendChild(delBtn);
-
-      ul.appendChild(li);
-    });
-  }
+    ul.appendChild(li);
+  });
+}  
 
   // Ricerca live
   const searchInput = document.getElementById('searchCategory');
