@@ -128,18 +128,15 @@ function renderCategories(list) {
     desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
     li.appendChild(desc);
 
-    // Note
-    const note = document.createElement('span');
-    note.className = 'note';
-    note.textContent = cat.cat_note || '';
-    if(cat.cat_note !== null) {
-      note.onclick = e => {
-        e.stopPropagation();
-        selectRow();             // prima seleziona la riga
-        editField(note, cat, 'cat_note');
-      };
-    }
-    li.appendChild(note);
+// Note
+const note = document.createElement('span');
+note.className = 'note';
+note.textContent = cat.cat_note || ''; // può essere vuoto
+note.onclick = e => {
+  e.stopPropagation();
+  if(selectedLi === li) editField(note, cat, 'cat_note'); // sempre modificabile
+};
+li.appendChild(note);
 
     // Pulsante Cancella
     const delBtn = document.createElement('button');
