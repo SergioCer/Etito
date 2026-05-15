@@ -5,13 +5,13 @@
 <title>Categorie</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  /* Barra fissa in alto */
+  /* Contenitore fisso in alto per Home, Titolo e Ricerca */
   #topBar {
     position: sticky;
     top: 0;
     background: #f4f4f9;
-    padding: 10px 20px;
     border-bottom: 2px solid #4CAF50;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -34,11 +34,6 @@
 
   #topBar a:hover { color: #45a049; }
 
-  #searchContainer {
-    margin-top: 5px;
-    padding: 0 20px;
-  }
-
   #searchCategory {
     width: 300px;
     padding: 6px 8px;
@@ -46,7 +41,7 @@
     border: 1px solid #ccc;
   }
 
-  /* Intestazione colonne */
+  /* Intestazione colonne fissa */
   #categoryHeader {
     display: flex;
     font-weight: bold;
@@ -54,18 +49,18 @@
     padding: 6px 10px;
     border-bottom: 2px solid #4CAF50;
     position: sticky;
-    top: 70px; /* sotto topBar e search */
+    top: 55px; /* altezza topBar */
     z-index: 500;
   }
 
   #categoryHeader span { padding: 0 4px; }
   #categoryHeader span.desc { flex-grow: 1; }
-  #categoryHeader span.note { flex-grow: 2; }
+  #categoryHeader span.note { flex-grow: 2; margin-left: 10px; }
   #categoryHeader span.del { width: 40px; text-align: center; }
 
   /* Lista categorie */
   #categoryList {
-    margin-top: 0;
+    margin: 0;
     padding: 0 20px;
     list-style: none;
   }
@@ -73,12 +68,11 @@
   #categoryList li {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 6px 10px;
     border-bottom: 1px solid #ddd;
   }
 
-  #categoryList li span.desc, 
+  #categoryList li span.desc,
   #categoryList li span.note {
     cursor: pointer;
     flex-shrink: 0;
@@ -96,6 +90,9 @@
     cursor: pointer;
     padding: 2px 6px;
     font-size: 0.85em;
+    flex-shrink: 0;
+    width: 30px;
+    text-align: center;
   }
 
   .delete-btn:disabled {
@@ -110,14 +107,10 @@
 <div id="topBar">
   <a href="index.html">← Home</a>
   <h2>Categorie</h2>
-</div>
-
-<!-- Ricerca sotto barra -->
-<div id="searchContainer">
   <input type="text" id="searchCategory" placeholder="Cerca categoria..." oninput="filterCategories()">
 </div>
 
-<!-- Intestazione colonne -->
+<!-- Intestazione colonne fissa -->
 <div id="categoryHeader">
   <span class="desc">Descrizione</span>
   <span class="note">Note</span>
@@ -133,7 +126,7 @@
   let categories = [];
 
   async function loadCategories(){
-    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', {ascending:true});
+    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria',{ascending:true});
     if(error) return alert("Errore caricamento categorie: "+error.message);
     categories = data || [];
     renderCategories();
@@ -143,7 +136,7 @@
     const ul = document.getElementById('categoryList');
     ul.innerHTML='';
 
-    const filtered = categories.filter(c => 
+    const filtered = categories.filter(c =>
       c.cat_descrizione.toLowerCase().includes(filter.toLowerCase()) ||
       (c.cat_note && c.cat_note.toLowerCase().includes(filter.toLowerCase()))
     );
@@ -153,14 +146,14 @@
 
       const desc = document.createElement('span');
       desc.className='desc';
-      desc.textContent=cat.cat_descrizione;
+      desc.textContent = cat.cat_descrizione;
       desc.onclick=()=> editField(desc,cat,'cat_descrizione');
       desc.ondblclick=()=> window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
       li.appendChild(desc);
 
       const note = document.createElement('span');
       note.className='note';
-      note.textContent=cat.cat_note || '';
+      note.textContent = cat.cat_note || '';
       note.onclick=()=> editField(note,cat,'cat_note');
       li.appendChild(note);
 
@@ -176,17 +169,21 @@
 
   async function editField(span, cat, field){
     const input=document.createElement('input');
-    input.type='text'; input.value=cat[field] || '';
+    input.type='text';
+    input.value=cat[field] || '';
     input.style.flexGrow=(field==='cat_descrizione')?'1':'2';
-    span.replaceWith(input); input.focus();
-
-    input.onkeydown=async e=>{ if(e.key==='Enter') await saveEdit(input,cat,field); if(e.key==='Escape') input.replaceWith(span); };
+    span.replaceWith(input);
+    input.focus();
+    input.onkeydown=async e=>{
+      if(e.key==='Enter') await saveEdit(input,cat,field);
+      if(e.key==='Escape') input.replaceWith(span);
+    };
     input.onblur=async ()=> await saveEdit(input,cat,field);
   }
 
   async function saveEdit(input, cat, field){
     const newVal=input.value.trim();
-    if(newVal === (cat[field] || '')) { renderCategories(document.getElementById('searchCategory').value.toLowerCase()); return; }
+    if(newVal === (cat[field] || '')) { filterCategories(); return; }
     const { error } = await supabase.from('categorie').update({[field]:newVal}).eq('id_categoria',cat.id_categoria);
     if(error) return alert("Errore modifica: "+error.message);
     await loadCategories();
