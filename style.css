@@ -81,26 +81,19 @@ button:hover {
 
 /* Pulsanti piccoli a fianco di liste */
 .icon-btn {
-  padding: 3px 6px;
-  font-size: 0.9em;
-  border-radius: 4px;
-  margin-left: 10px;
-  width: auto;        /* non full width come i button principali */
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
+    padding: 3px 6px;
+    font-size: 0.9em;
+    border-radius: 4px;
+    margin-left: 10px;
+    width: auto; /* non full width */
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
 
 .icon-btn:hover {
-  background-color: #45a049;
-}
-
-#categoryList li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
+    background-color: #45a049;
 }
 
 /* ------------------------ TABELLE ------------------------ */
@@ -132,6 +125,7 @@ ul {
     padding-left: 0; 
 }
 
+/* Lista categorie */
 ul#categoryList li {
     display: flex;
     justify-content: space-between;
@@ -142,14 +136,32 @@ ul#categoryList li {
     border-radius: 5px;
     border: 1px solid #ddd;
     transition: background-color 0.2s;
+    cursor: pointer;
 }
 
-ul#categoryList li:hover {
-    background-color: #f0e5d8;
+/* Evidenziazione riga selezionata */
+ul#categoryList li.selected {
+    background-color: #d0f0d0 !important; /* override hover */
 }
+
+/* Disabilita hover della lista categorie */
+ul#categoryList li:hover {
+    background-color: inherit;
+}
+
+ul#categoryList li span.desc,
+ul#categoryList li span.note {
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+ul#categoryList li span.desc { flex:1; }
+ul#categoryList li span.note { flex:2; margin: 0 10px; }
 
 ul#categoryList li button {
     margin-left: 5px;
+    flex: 0 0 30px; /* forza dimensione pulsante cancella */
 }
 
 /* ------------------------ FILTRO / INPUT RICERCA ------------------------ */
@@ -164,4 +176,6 @@ ul#categoryList li button {
     section { padding: 10px 15px; }
     h1 { font-size: 1.6em; }
     h2 { font-size: 1.2em; }
+    #searchCategory { width: 100%; }
+    ul#categoryList li { padding: 6px 8px; }
 }
