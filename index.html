@@ -7,90 +7,24 @@
 </head>
 <body>
 
-<h1>Gestione Articoli e Categorie</h1>
+<h1>Pannello di Controllo</h1>
 
-<section id="categoriesSection">
+<section>
   <h2>Categorie</h2>
-  <p><a href="categorie.html">Vai alla gestione categorie →</a></p>
+  <p>Gestisci le categorie del sistema:</p>
+  <p><a href="categorie.html">→ Vai a Gestione Categorie</a></p>
 </section>
 
-<section id="articlesSection">
+<section>
   <h2>Articoli</h2>
-  <input type="text" id="articleDesc" placeholder="Descrizione articolo">
-  <select id="categorySelect">
-    <option value="">-- Seleziona categoria --</option>
-  </select>
-  <button onclick="addArticle()">Aggiungi Articolo</button>
+  <p>Gestisci gli articoli del sistema:</p>
+  <p><a href="articoli.html">→ Vai a Gestione Articoli</a></p>
 </section>
 
-<section id="listSection">
-  <h2>Lista Articoli</h2>
-  <table id="articleTable">
-    <thead>
-      <tr><th>ID Articolo</th><th>Descrizione</th><th>Categoria</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<section>
+  <h2>Altre Funzioni</h2>
+  <p>Qui verranno aggiunti altri collegamenti o strumenti in futuro.</p>
 </section>
-
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-  const supabaseUrl = 'https://lvtywxtunfmnkmwowxnh.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2dHl3eHR1bmZtbmttd293eG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3Njg4MDcsImV4cCI6MjA5NDM0NDgwN30.qq1qPdUxYFcqnv4cA50JMyTBAA5XWKxruL6HEE4-ACM';
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  async function loadCategories() {
-      const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
-      if (error) return alert("Errore caricamento categorie: " + error.message);
-
-      const select = document.getElementById('categorySelect');
-      select.innerHTML = '<option value="">-- Seleziona categoria --</option>';
-      data.forEach(cat => {
-          const option = document.createElement('option');
-          option.value = cat.id_categoria;
-          option.textContent = cat.cat_descrizione;
-          select.appendChild(option);
-      });
-  }
-
-  async function loadArticles() {
-      const { data, error } = await supabase.from('articoli').select(`id_articolo, art_descrizione, id_categorie, categorie(cat_descrizione)`).order('id_articolo', { ascending: true });
-      if (error) return alert("Errore caricamento articoli: " + error.message);
-
-      const tbody = document.getElementById('articleTable').querySelector('tbody');
-      tbody.innerHTML = '';
-      if (!data || data.length === 0) {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td colspan="3" style="text-align:center;">Nessun articolo presente</td>`;
-          tbody.appendChild(tr);
-          return;
-      }
-
-      data.forEach(a => {
-          const tr = document.createElement('tr');
-          const categoryName = a.categorie ? a.categorie.cat_descrizione : '';
-          tr.innerHTML = `<td>${a.id_articolo}</td><td>${a.art_descrizione || ''}</td><td>${categoryName}</td>`;
-          tbody.appendChild(tr);
-      });
-  }
-
-  async function addArticle() {
-      const desc = document.getElementById('articleDesc').value.trim();
-      const catId = document.getElementById('categorySelect').value;
-      if (!desc || !catId) return alert("Inserisci descrizione e seleziona categoria");
-
-      const { data, error } = await supabase.from('articoli').insert([{ art_descrizione: desc, id_categorie: parseInt(catId) }]).select();
-      if (error) return alert("Errore aggiunta articolo: " + error.message);
-
-      document.getElementById('articleDesc').value = '';
-      document.getElementById('categorySelect').value = '';
-      await loadArticles();
-  }
-
-  loadCategories();
-  loadArticles();
-</script>
 
 </body>
 </html>
