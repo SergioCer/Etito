@@ -5,197 +5,152 @@
 <title>Categorie</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  /* Barra fissa in alto */
+  body { margin:0; font-family:sans-serif; background:#f4f4f9; }
+
+  /* Barra superiore */
   #topBar {
-    position: sticky;
-    top: 0;
-    background: #f4f4f9;
-    padding: 10px 20px;
-    border-bottom: 2px solid #4CAF50;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 1000;
+    position: sticky; top:0; z-index:1000;
+    background:#f4f4f9; padding:10px 20px; display:flex; justify-content:space-between; align-items:center;
+    border-bottom:2px solid #4CAF50;
   }
+  #topBar h2 { margin:0; font-size:1.5em; }
+  #topBar a { font-weight:bold; text-decoration:none; }
 
-  #topBar h2 {
-    margin: 0;
-    font-size: 1.5em;
+  /* Barra ricerca */
+  #searchBar {
+    position: sticky; top:50px; z-index:999;
+    background:#f4f4f9; padding:5px 20px; border-bottom:2px solid #4CAF50;
   }
+  #searchBar input { width:300px; padding:5px 8px; border-radius:4px; border:1px solid #ccc; }
 
-  #topBar a {
-    font-weight: bold;
+  /* Intestazione colonne */
+  #headerCols {
+    position: sticky; top:90px; z-index:998;
+    display:flex; padding:5px 20px; font-weight:bold; background:#eee; border-bottom:2px solid #4CAF50;
   }
+  #headerCols .desc { flex:1; }
+  #headerCols .note { flex:2; margin-left:10px; }
+  #headerCols .del { width:60px; margin-left:10px; text-align:center; }
 
-  /* Lista categorie */
-  #categoryList li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 10px;
-    border-bottom: 1px solid #ddd;
-  }
+  /* Lista scrollabile */
+  #categoryListContainer { max-height:calc(100vh - 130px); overflow-y:auto; }
+  #categoryList li { display:flex; align-items:center; padding:6px 20px; border-bottom:1px solid #ddd; }
+  #categoryList li span.desc { flex:1; cursor:pointer; }
+  #categoryList li span.note { flex:2; margin-left:10px; cursor:pointer; }
+  #categoryList li button.delete-btn { width:60px; padding:3px 6px; font-size:0.9em; background:red; color:white; border:none; border-radius:4px; cursor:pointer; }
+  #categoryList li button.delete-btn:disabled { background:#ccc; cursor:not-allowed; }
 
-  #categoryList li input {
-    flex-grow: 1;
-    margin-right: 10px;
-  }
-
-  /* Colonna Note */
-  .note {
-    flex-grow: 2;
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-
-  /* Pulsante cancella rosso */
-  .delete-btn {
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 3px 6px;
-    font-size: 0.9em;
-  }
-
-  .delete-btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-
-  /* Input ricerca */
-  #searchCategory {
-    width: 300px;
-    margin-left: 20px;
-    padding: 5px 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
+  /* Riga nuova categoria */
+  #categoryList li.newCat input { flex:1; padding:5px 8px; border-radius:4px; border:1px solid #ccc; }
 </style>
 </head>
 <body>
 
-<!-- Barra fissa in alto -->
+<!-- Barra superiore -->
 <div id="topBar">
   <a href="index.html">← Home</a>
   <h2>Categorie</h2>
+</div>
+
+<!-- Barra ricerca -->
+<div id="searchBar">
   <input type="text" id="searchCategory" placeholder="Cerca categoria..." oninput="filterCategories()">
 </div>
 
-<!-- Lista categorie -->
-<ul id="categoryList" style="margin-top:10px;"></ul>
+<!-- Intestazione colonne -->
+<div id="headerCols">
+  <span class="desc">Descrizione</span>
+  <span class="note">Note</span>
+  <span class="del">Cancella</span>
+</div>
+
+<!-- Lista scrollabile -->
+<div id="categoryListContainer">
+  <ul id="categoryList"></ul>
+</div>
 
 <script type="module">
   import { supabase } from './supabase.js';
-
   let categories = [];
 
-  async function loadCategories() {
-    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
-    if (error) return alert("Errore caricamento categorie: " + error.message);
+  async function loadCategories(){
+    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria',{ascending:true});
+    if(error) return alert("Errore caricamento categorie: "+error.message);
     categories = data || [];
     renderCategories();
   }
 
-  function renderCategories(filter = '') {
+  function renderCategories(filter=''){
     const ul = document.getElementById('categoryList');
-    ul.innerHTML = '';
+    ul.innerHTML='';
 
-    // intestazione colonne fissa
-    const header = document.createElement('li');
-    header.style.fontWeight = 'bold';
-    header.style.backgroundColor = '#eee';
-    header.innerHTML = '<span style="flex:1">Descrizione</span><span class="note">Note</span><span style="width:50px">Cancella</span>';
-    ul.appendChild(header);
-
-    // Lista categorie filtrate
-    categories
-      .filter(cat => cat.cat_descrizione.toLowerCase().includes(filter.toLowerCase()) || (cat.cat_note && cat.cat_note.toLowerCase().includes(filter.toLowerCase())))
+    // Lista filtrata
+    categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter.toLowerCase()) || (c.cat_note && c.cat_note.toLowerCase().includes(filter.toLowerCase())))
       .forEach(cat => {
         const li = document.createElement('li');
 
-        // Campo descrizione (modifica inline)
-        const descSpan = document.createElement('span');
-        descSpan.textContent = cat.cat_descrizione;
-        descSpan.style.flexGrow = '1';
-        descSpan.style.cursor = 'pointer';
-        descSpan.onclick = () => editField(descSpan, cat, 'cat_descrizione');
-        descSpan.ondblclick = () => {
-          window.location.href = `articoli.html?categoria=${cat.id_categoria}`;
-        };
-        li.appendChild(descSpan);
+        const desc = document.createElement('span'); desc.className='desc';
+        desc.textContent=cat.cat_descrizione;
+        desc.onclick=()=> editField(desc,cat,'cat_descrizione');
+        desc.ondblclick=()=> window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
+        li.appendChild(desc);
 
-        // Campo note (modifica inline)
-        const noteSpan = document.createElement('span');
-        noteSpan.textContent = cat.cat_note || '';
-        noteSpan.className = 'note';
-        noteSpan.style.cursor = 'pointer';
-        noteSpan.onclick = () => editField(noteSpan, cat, 'cat_note');
-        li.appendChild(noteSpan);
+        const note = document.createElement('span'); note.className='note';
+        note.textContent=cat.cat_note||'';
+        note.onclick=()=> editField(note,cat,'cat_note');
+        li.appendChild(note);
 
-        // Pulsante cancella
-        const delBtn = document.createElement('button');
-        delBtn.textContent = '❌';
-        delBtn.className = 'delete-btn';
-        delBtn.onclick = async () => deleteCategory(cat);
+        const delBtn=document.createElement('button'); delBtn.className='delete-btn';
+        delBtn.textContent='❌';
+        delBtn.onclick=()=> deleteCategory(cat);
         li.appendChild(delBtn);
 
         ul.appendChild(li);
       });
 
-    // Riga per aggiungere nuova categoria
-    const newLi = document.createElement('li');
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.placeholder = 'Nuova categoria...';
-    input.onkeydown = async (e) => { if(e.key==='Enter') { await addCategory(input.value); input.value=''; }};
-    input.onblur = async () => { if(input.value.trim()){ await addCategory(input.value); input.value=''; }};
+    // Nuova categoria
+    const newLi=document.createElement('li'); newLi.className='newCat';
+    const input=document.createElement('input'); input.placeholder='Nuova categoria...';
+    input.onkeydown=async e=>{ if(e.key==='Enter'){ await addCategory(input.value); input.value=''; }};
+    input.onblur=async ()=>{ if(input.value.trim()){ await addCategory(input.value); input.value=''; }};
     newLi.appendChild(input);
     ul.appendChild(newLi);
   }
 
   async function addCategory(name){
-    name = name.trim();
-    if(!name) return;
-    const { data, error } = await supabase.from('categorie').insert([{ cat_descrizione: name }]).select();
-    if(error) return alert("Errore aggiunta categoria: "+error.message);
+    name=name.trim(); if(!name) return;
+    const { data, error }=await supabase.from('categorie').insert([{cat_descrizione:name}]).select();
+    if(error) return alert("Errore aggiunta: "+error.message);
     await loadCategories();
   }
 
   async function editField(span, cat, field){
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = cat[field] || '';
-    input.style.flexGrow = field==='cat_descrizione'? '1':'2';
-    span.replaceWith(input);
-    input.focus();
-
-    input.onkeydown = async (e) => { if(e.key==='Enter') await saveEdit(input, cat, field); if(e.key==='Escape') input.replaceWith(span); };
-    input.onblur = async () => await saveEdit(input, cat, field);
+    const input=document.createElement('input');
+    input.type='text'; input.value=cat[field]||'';
+    input.style.flexGrow=(field==='cat_descrizione')?'1':'2';
+    span.replaceWith(input); input.focus();
+    input.onkeydown=async e=>{ if(e.key==='Enter') await saveEdit(input,cat,field); if(e.key==='Escape') input.replaceWith(span); };
+    input.onblur=async ()=>await saveEdit(input,cat,field);
   }
 
   async function saveEdit(input, cat, field){
-    const newVal = input.value.trim();
-    if(newVal === (cat[field] || '')){ await loadCategories(); return; }
-    const { error } = await supabase.from('categorie').update({ [field]: newVal }).eq('id_categoria', cat.id_categoria);
+    const newVal=input.value.trim();
+    if(newVal===(cat[field]||'')){ await loadCategories(); return; }
+    const { error } = await supabase.from('categorie').update({[field]:newVal}).eq('id_categoria',cat.id_categoria);
     if(error) return alert("Errore modifica: "+error.message);
     await loadCategories();
   }
 
   async function deleteCategory(cat){
-    const { data: articoli } = await supabase.from('articoli').select('*').eq('id_categorie', cat.id_categoria);
+    const { data: articoli } = await supabase.from('articoli').select('*').eq('id_categorie',cat.id_categoria);
     if(articoli.length>0){ alert("Impossibile eliminare: esistono articoli in questa categoria."); return; }
     if(!confirm(`Eliminare categoria "${cat.cat_descrizione}"?`)) return;
-    const { error } = await supabase.from('categorie').delete().eq('id_categoria', cat.id_categoria);
+    const { error } = await supabase.from('categorie').delete().eq('id_categoria',cat.id_categoria);
     if(error) return alert("Errore cancellazione: "+error.message);
     await loadCategories();
   }
 
-  function filterCategories(){
-    const filter = document.getElementById('searchCategory').value;
-    renderCategories(filter);
-  }
+  function filterCategories(){ const filter=document.getElementById('searchCategory').value; renderCategories(filter); }
 
   loadCategories();
 </script>
