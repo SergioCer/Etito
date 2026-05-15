@@ -144,11 +144,6 @@ ul#categoryList li.selected {
     background-color: #d0f0d0 !important; /* override hover */
 }
 
-/* Disabilita hover della lista categorie */
-ul#categoryList li:hover {
-    background-color: inherit;
-}
-
 ul#categoryList li span.desc,
 ul#categoryList li span.note {
     cursor: pointer;
