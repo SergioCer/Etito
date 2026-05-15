@@ -149,6 +149,7 @@ ul#categoryList li span.note {
     cursor: pointer;
     user-select: none;
     flex-shrink: 0;
+    min-width: 50px; /* garantisce area cliccabile anche se vuoto */
 }
 
 ul#categoryList li span.desc { flex:1; }
