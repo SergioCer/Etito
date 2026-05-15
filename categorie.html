@@ -5,76 +5,141 @@
 <title>Categorie</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  body { margin:0; font-family:sans-serif; background:#f4f4f9; }
-
-  /* Barra superiore */
+  /* ---------------- Barra fissa in alto ---------------- */
   #topBar {
-    position: sticky; top:0; z-index:1000;
-    background:#f4f4f9; padding:10px 20px; display:flex; justify-content:space-between; align-items:center;
-    border-bottom:2px solid #4CAF50;
+    position: sticky;
+    top: 0;
+    background: #f4f4f9;
+    padding: 10px 20px;
+    border-bottom: 2px solid #4CAF50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
   }
-  #topBar h2 { margin:0; font-size:1.5em; }
-  #topBar a { font-weight:bold; text-decoration:none; }
 
-  /* Barra ricerca */
-  #searchBar {
-    position: sticky; top:50px; z-index:999;
-    background:#f4f4f9; padding:5px 20px; border-bottom:2px solid #4CAF50;
+  #topBar h2 {
+    margin: 0;
+    font-size: 1.5em;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
-  #searchBar input { width:300px; padding:5px 8px; border-radius:4px; border:1px solid #ccc; }
+
+  #topBar a {
+    font-weight: bold;
+    text-decoration: none;
+    color: #4CAF50;
+  }
+
+  #topBar a:hover { color: #45a049; }
+
+  #searchContainer {
+    margin-top: 5px;
+    padding: 0 20px;
+  }
+
+  #searchCategory {
+    width: 300px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  /* ---------------- Lista categorie ---------------- */
+  #categoryList {
+    margin-top: 10px;
+    padding: 0 20px;
+  }
+
+  #categoryList li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #categoryList li span.desc, 
+  #categoryList li span.note {
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 2px 4px;
+  }
+
+  #categoryList li span.desc { flex-grow: 1; }
+  #categoryList li span.note { flex-grow: 2; margin-left: 10px; }
+
+  .delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 3px 6px;
+    font-size: 0.9em;
+  }
+
+  .delete-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  #categoryList li.newCat input {
+    flex-grow: 1;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
 
   /* Intestazione colonne */
-  #headerCols {
-    position: sticky; top:90px; z-index:998;
-    display:flex; padding:5px 20px; font-weight:bold; background:#eee; border-bottom:2px solid #4CAF50;
+  #categoryHeader {
+    display: flex;
+    font-weight: bold;
+    background-color: #eee;
+    padding: 6px 10px;
+    border-bottom: 2px solid #4CAF50;
+    position: sticky;
+    top: 70px; /* sotto topBar e search */
+    z-index: 500;
   }
-  #headerCols .desc { flex:1; }
-  #headerCols .note { flex:2; margin-left:10px; }
-  #headerCols .del { width:60px; margin-left:10px; text-align:center; }
 
-  /* Lista scrollabile */
-  #categoryListContainer { max-height:calc(100vh - 130px); overflow-y:auto; }
-  #categoryList li { display:flex; align-items:center; padding:6px 20px; border-bottom:1px solid #ddd; }
-  #categoryList li span.desc { flex:1; cursor:pointer; }
-  #categoryList li span.note { flex:2; margin-left:10px; cursor:pointer; }
-  #categoryList li button.delete-btn { width:60px; padding:3px 6px; font-size:0.9em; background:red; color:white; border:none; border-radius:4px; cursor:pointer; }
-  #categoryList li button.delete-btn:disabled { background:#ccc; cursor:not-allowed; }
-
-  /* Riga nuova categoria */
-  #categoryList li.newCat input { flex:1; padding:5px 8px; border-radius:4px; border:1px solid #ccc; }
+  #categoryHeader span { padding: 0 4px; }
+  #categoryHeader span.desc { flex-grow: 1; }
+  #categoryHeader span.note { flex-grow: 2; }
+  #categoryHeader span.del { width: 50px; text-align: center; }
 </style>
 </head>
 <body>
 
-<!-- Barra superiore -->
+<!-- Barra fissa in alto -->
 <div id="topBar">
   <a href="index.html">← Home</a>
   <h2>Categorie</h2>
 </div>
 
-<!-- Barra ricerca -->
-<div id="searchBar">
+<!-- Ricerca sotto barra -->
+<div id="searchContainer">
   <input type="text" id="searchCategory" placeholder="Cerca categoria..." oninput="filterCategories()">
 </div>
 
 <!-- Intestazione colonne -->
-<div id="headerCols">
+<div id="categoryHeader">
   <span class="desc">Descrizione</span>
   <span class="note">Note</span>
   <span class="del">Cancella</span>
 </div>
 
-<!-- Lista scrollabile -->
-<div id="categoryListContainer">
-  <ul id="categoryList"></ul>
-</div>
+<!-- Lista categorie -->
+<ul id="categoryList"></ul>
 
 <script type="module">
   import { supabase } from './supabase.js';
+
   let categories = [];
 
   async function loadCategories(){
-    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria',{ascending:true});
+    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', {ascending:true});
     if(error) return alert("Errore caricamento categorie: "+error.message);
     categories = data || [];
     renderCategories();
@@ -85,57 +150,67 @@
     ul.innerHTML='';
 
     // Lista filtrata
-    categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter.toLowerCase()) || (c.cat_note && c.cat_note.toLowerCase().includes(filter.toLowerCase())))
-      .forEach(cat => {
-        const li = document.createElement('li');
+    const filtered = categories.filter(c => 
+      c.cat_descrizione.toLowerCase().includes(filter.toLowerCase()) ||
+      (c.cat_note && c.cat_note.toLowerCase().includes(filter.toLowerCase()))
+    );
 
-        const desc = document.createElement('span'); desc.className='desc';
-        desc.textContent=cat.cat_descrizione;
-        desc.onclick=()=> editField(desc,cat,'cat_descrizione');
-        desc.ondblclick=()=> window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
-        li.appendChild(desc);
+    filtered.forEach(cat => {
+      const li = document.createElement('li');
 
-        const note = document.createElement('span'); note.className='note';
-        note.textContent=cat.cat_note||'';
-        note.onclick=()=> editField(note,cat,'cat_note');
-        li.appendChild(note);
+      const desc = document.createElement('span');
+      desc.className='desc';
+      desc.textContent=cat.cat_descrizione;
+      desc.onclick=()=> editField(desc,cat,'cat_descrizione');
+      desc.ondblclick=()=> window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
+      li.appendChild(desc);
 
-        const delBtn=document.createElement('button'); delBtn.className='delete-btn';
-        delBtn.textContent='❌';
-        delBtn.onclick=()=> deleteCategory(cat);
-        li.appendChild(delBtn);
+      const note = document.createElement('span');
+      note.className='note';
+      note.textContent=cat.cat_note || '';
+      note.onclick=()=> editField(note,cat,'cat_note');
+      li.appendChild(note);
 
-        ul.appendChild(li);
-      });
+      const delBtn = document.createElement('button');
+      delBtn.className='delete-btn';
+      delBtn.textContent='❌';
+      delBtn.onclick=()=> deleteCategory(cat);
+      li.appendChild(delBtn);
+
+      ul.appendChild(li);
+    });
 
     // Nuova categoria
-    const newLi=document.createElement('li'); newLi.className='newCat';
-    const input=document.createElement('input'); input.placeholder='Nuova categoria...';
-    input.onkeydown=async e=>{ if(e.key==='Enter'){ await addCategory(input.value); input.value=''; }};
-    input.onblur=async ()=>{ if(input.value.trim()){ await addCategory(input.value); input.value=''; }};
+    const newLi = document.createElement('li');
+    newLi.className='newCat';
+    const input = document.createElement('input');
+    input.placeholder='Nuova categoria...';
+    input.onkeydown=async e=>{ if(e.key==='Enter'){ await addCategory(input.value); input.value=''; filterCategories(); } };
+    input.onblur=async ()=>{ if(input.value.trim()){ await addCategory(input.value); input.value=''; filterCategories(); } };
     newLi.appendChild(input);
     ul.appendChild(newLi);
   }
 
   async function addCategory(name){
     name=name.trim(); if(!name) return;
-    const { data, error }=await supabase.from('categorie').insert([{cat_descrizione:name}]).select();
+    const { data, error } = await supabase.from('categorie').insert([{cat_descrizione:name}]).select();
     if(error) return alert("Errore aggiunta: "+error.message);
     await loadCategories();
   }
 
   async function editField(span, cat, field){
     const input=document.createElement('input');
-    input.type='text'; input.value=cat[field]||'';
+    input.type='text'; input.value=cat[field] || '';
     input.style.flexGrow=(field==='cat_descrizione')?'1':'2';
     span.replaceWith(input); input.focus();
+
     input.onkeydown=async e=>{ if(e.key==='Enter') await saveEdit(input,cat,field); if(e.key==='Escape') input.replaceWith(span); };
-    input.onblur=async ()=>await saveEdit(input,cat,field);
+    input.onblur=async ()=> await saveEdit(input,cat,field);
   }
 
   async function saveEdit(input, cat, field){
     const newVal=input.value.trim();
-    if(newVal===(cat[field]||'')){ await loadCategories(); return; }
+    if(newVal === (cat[field] || '')) { await loadCategories(); return; }
     const { error } = await supabase.from('categorie').update({[field]:newVal}).eq('id_categoria',cat.id_categoria);
     if(error) return alert("Errore modifica: "+error.message);
     await loadCategories();
@@ -151,16 +226,9 @@
   }
 
   function filterCategories(){
-  const filter = document.getElementById('searchCategory').value.toLowerCase();
-  const ul = document.getElementById('categoryList');
-  // Tutti gli <li> tranne l'ultimo (nuova categoria)
-  Array.from(ul.children).forEach((li, index) => {
-    if(index === ul.children.length - 1) return; // salta l'input nuova categoria
-    const desc = li.querySelector('span.desc').textContent.toLowerCase();
-    const note = li.querySelector('span.note').textContent.toLowerCase();
-    li.style.display = (desc.includes(filter) || note.includes(filter)) ? 'flex' : 'none';
-  });
-}
+    const filter = document.getElementById('searchCategory').value.toLowerCase();
+    renderCategories(filter);
+  }
 
   loadCategories();
 </script>
