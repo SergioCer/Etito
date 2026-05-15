@@ -32,7 +32,7 @@
   #searchWrapper {
     margin-top: 5px;
     position: sticky;
-    top: 60px; /* subito sotto topBar */
+    top: 60px;
     background: #f4f4f9;
     padding: 5px 20px;
     border-bottom: 1px solid #ccc;
@@ -74,7 +74,7 @@
     cursor: pointer;
     padding: 3px 6px;
     font-size: 0.9em;
-    width: 50px;
+    width: 30px; /* modificato da 50px */
     text-align: center;
   }
 
@@ -88,6 +88,9 @@
     background-color: #eee;
     display: flex;
     padding: 6px 10px;
+    position: sticky;
+    top: 100px; /* sotto topBar + searchWrapper */
+    z-index: 998;
   }
 
   #categoryHeader span {
@@ -96,8 +99,7 @@
 
   #categoryHeader span.desc { flex:1; }
   #categoryHeader span.note { flex:2; }
-  #categoryHeader span.del { width:50px; text-align:center; }
-
+  #categoryHeader span.del { width:30px; text-align:center; } /* allineata a delete-btn */
 </style>
 </head>
 <body>
@@ -106,7 +108,7 @@
 <div id="topBar">
   <a href="index.html">← Home</a>
   <h2>Categorie</h2>
-  <div style="width:50px;"></div> <!-- spazio per bilanciare la barra -->
+  <div style="width:50px;"></div>
 </div>
 
 <!-- Barra ricerca -->
@@ -142,26 +144,26 @@
     list.forEach(cat => {
       const li = document.createElement('li');
 
-      // Descrizione (modifica inline)
+      // Descrizione
       const desc = document.createElement('span'); 
       desc.className='desc';
-      desc.textContent=cat.cat_descrizione;
-      desc.onclick=()=> editField(desc,cat,'cat_descrizione');
-      desc.ondblclick=()=> window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
+      desc.textContent = cat.cat_descrizione;
+      desc.onclick = () => editField(desc, cat, 'cat_descrizione');
+      desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
       li.appendChild(desc);
 
       // Note
       const note = document.createElement('span'); 
       note.className='note';
-      note.textContent=cat.cat_note||'';
-      note.onclick=()=> editField(note,cat,'cat_note');
+      note.textContent = cat.cat_note || ''; // anche null
+      note.onclick = () => editField(note, cat, 'cat_note'); // clic sempre funziona
       li.appendChild(note);
 
       // Pulsante cancella
-      const delBtn=document.createElement('button'); 
-      delBtn.className='delete-btn';
-      delBtn.textContent='❌';
-      delBtn.onclick=()=> deleteCategory(cat);
+      const delBtn = document.createElement('button'); 
+      delBtn.className = 'delete-btn';
+      delBtn.textContent = '❌';
+      delBtn.onclick = () => deleteCategory(cat);
       li.appendChild(delBtn);
 
       ul.appendChild(li);
@@ -178,31 +180,32 @@
 
   async function editField(span, cat, field){
     const input = document.createElement('input');
-    input.type='text'; 
-    input.value=cat[field]||'';
-    input.style.flexGrow = (field==='cat_descrizione')?'1':'2';
+    input.type = 'text'; 
+    input.value = cat[field] || ''; 
+    input.style.flexGrow = (field==='cat_descrizione') ? '1' : '2';
     span.replaceWith(input);
     input.focus();
-    input.onkeydown=async e=>{
-      if(e.key==='Enter') await saveEdit(input,cat,field);
+    input.select();
+    input.onkeydown = async e => {
+      if(e.key==='Enter') await saveEdit(input, cat, field);
       if(e.key==='Escape') input.replaceWith(span);
     };
-    input.onblur=async ()=> await saveEdit(input,cat,field);
+    input.onblur = async () => await saveEdit(input, cat, field);
   }
 
   async function saveEdit(input, cat, field){
     const newVal = input.value.trim();
-    if(newVal === (cat[field]||'')){ await loadCategories(); return; }
-    const { error } = await supabase.from('categorie').update({[field]:newVal}).eq('id_categoria',cat.id_categoria);
+    if(newVal === (cat[field]||'')) { await loadCategories(); return; }
+    const { error } = await supabase.from('categorie').update({[field]: newVal}).eq('id_categoria', cat.id_categoria);
     if(error) return alert("Errore modifica: "+error.message);
     await loadCategories();
   }
 
   async function deleteCategory(cat){
-    const { data: articoli } = await supabase.from('articoli').select('*').eq('id_categorie',cat.id_categoria);
+    const { data: articoli } = await supabase.from('articoli').select('*').eq('id_categorie', cat.id_categoria);
     if(articoli.length>0){ alert("Impossibile eliminare: esistono articoli in questa categoria."); return; }
     if(!confirm(`Eliminare categoria "${cat.cat_descrizione}"?`)) return;
-    const { error } = await supabase.from('categorie').delete().eq('id_categoria',cat.id_categoria);
+    const { error } = await supabase.from('categorie').delete().eq('id_categoria', cat.id_categoria);
     if(error) return alert("Errore cancellazione: "+error.message);
     await loadCategories();
   }
