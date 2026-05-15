@@ -14,25 +14,26 @@
     border-bottom: 2px solid #4CAF50;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     z-index: 1000;
+  }
+
+  #topBar a {
+    position: absolute;
+    left: 20px;
+    font-weight: bold;
   }
 
   #topBar h2 {
     margin: 0;
     font-size: 1.5em;
     text-align: center;
-    flex-grow: 1;
   }
 
-  #topBar a {
-    font-weight: bold;
-  }
-
+  /* Ricerca fissa sotto barra */
   #searchWrapper {
-    margin-top: 5px;
     position: sticky;
-    top: 60px;
+    top: 52px; /* sotto barra topBar */
     background: #f4f4f9;
     padding: 5px 20px;
     border-bottom: 1px solid #ccc;
@@ -46,107 +47,122 @@
     border: 1px solid #ccc;
   }
 
-#categoryList li {
-  display: flex;
-  align-items: center;
-  padding: 2px 6px; /* più compatto */
-  border-bottom: 1px solid #ddd;
-}
-
-#categoryList li span.desc,
-#categoryList li span.note {
-  cursor: pointer;
-}
-
-#categoryList li span.desc { flex-grow: 1; }
-#categoryList li span.note { flex-grow: 2; margin-left:10px; margin-right:10px; }
-
-.delete-btn {
-  background-color: red;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  padding: 2px 4px;
-  font-size: 0.9em;
-  width: 30px;
-  margin-left: auto; /* allinea a destra */
-  display: flex;
-  justify-content: flex-end; /* testo parte da destra */
-}
-
-  .delete-btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-
+  /* Header lista categorie */
   #categoryHeader {
     font-weight: bold;
     background-color: #eee;
     display: flex;
     padding: 3px 8px;
     position: sticky;
-    top: 100px;
+    top: 88px; /* sotto barra + ricerca */
     z-index: 998;
   }
 
   #categoryHeader span.desc { flex:1; }
   #categoryHeader span.note { flex:2; margin-left:10px; margin-right:10px; }
   #categoryHeader span.del { width:30px; text-align:right; margin-left:auto; }
+
+  /* Lista categorie */
+  #categoryList li {
+    display: flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #categoryList li span.desc,
+  #categoryList li span.note {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  #categoryList li span.desc { flex:1; }
+  #categoryList li span.note { flex:2; margin-left:10px; margin-right:10px; }
+
+  .delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    flex: 0 0 30px; /* larghezza fissa */
+    margin-left: auto;
+    padding: 2px 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .delete-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 </style>
 </head>
 <body>
 
+<!-- Barra Top -->
 <div id="topBar">
   <a href="index.html">← Home</a>
   <h2>Categorie</h2>
-  <div style="width:50px;"></div>
 </div>
 
+<!-- Ricerca -->
 <div id="searchWrapper">
   <input type="text" id="searchCategory" placeholder="Cerca categoria...">
 </div>
 
+<!-- Header lista -->
 <div id="categoryHeader">
   <span class="desc">Descrizione</span>
   <span class="note">Note</span>
   <span class="del">Cancella</span>
 </div>
 
+<!-- Lista categorie -->
 <ul id="categoryList"></ul>
 
 <script type="module">
   import { supabase } from './supabase.js';
   let categories = [];
 
-  async function loadCategories(){
-    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria',{ascending:true});
+  async function loadCategories() {
+    const { data, error } = await supabase
+      .from('categorie')
+      .select('*')
+      .order('id_categoria', { ascending:true });
     if(error) return alert("Errore caricamento categorie: "+error.message);
     categories = data || [];
     renderCategories(categories);
   }
 
-  function renderCategories(list){
+  function renderCategories(list) {
     const ul = document.getElementById('categoryList');
-    ul.innerHTML='';
+    ul.innerHTML = '';
 
     list.forEach(cat => {
       const li = document.createElement('li');
 
-      const desc = document.createElement('span'); 
-      desc.className='desc';
+      // Descrizione
+      const desc = document.createElement('span');
+      desc.className = 'desc';
       desc.textContent = cat.cat_descrizione;
-      desc.addEventListener('click', e => { e.stopPropagation(); editField(desc, cat, 'cat_descrizione'); });
+      desc.onclick = () => editField(desc, cat, 'cat_descrizione');
       desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
       li.appendChild(desc);
 
-      const note = document.createElement('span'); 
-      note.className='note';
+      // Note
+      const note = document.createElement('span');
+      note.className = 'note';
       note.textContent = cat.cat_note || '';
-      note.addEventListener('click', e => { e.stopPropagation(); editField(note, cat, 'cat_note'); });
+      if(cat.cat_note !== null){
+        note.onclick = () => editField(note, cat, 'cat_note');
+      }
       li.appendChild(note);
 
-      const delBtn = document.createElement('button'); 
+      // Pulsante Cancella
+      const delBtn = document.createElement('button');
       delBtn.className = 'delete-btn';
       delBtn.textContent = '❌';
       delBtn.onclick = () => deleteCategory(cat);
@@ -156,21 +172,21 @@
     });
   }
 
+  // Ricerca live
   const searchInput = document.getElementById('searchCategory');
-  searchInput.focus(); // cursore all'apertura
+  searchInput.focus();
   searchInput.addEventListener('input', () => {
     const filter = searchInput.value.toLowerCase();
     const filtered = categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter));
     renderCategories(filtered);
   });
 
-// click su campo descrizione/note
-async function editField(span, cat, field){
-  setTimeout(() => { // forziamo il click dopo gestione evento
+  async function editField(span, cat, field) {
+    if(field==='cat_note' && cat.cat_note===null) return; // non modificabile se null
     const input = document.createElement('input');
-    input.type='text';
+    input.type = 'text';
     input.value = cat[field] || '';
-    input.style.flexGrow = (field==='cat_descrizione') ? '1' : '2';
+    input.style.flexGrow = (field==='cat_descrizione')?'1':'2';
     span.replaceWith(input);
     input.focus();
     input.select();
@@ -179,22 +195,27 @@ async function editField(span, cat, field){
       if(e.key==='Escape') input.replaceWith(span);
     };
     input.onblur = async () => await saveEdit(input, cat, field);
-  }, 0);
-}
+  }
 
-  async function saveEdit(input, cat, field){
+  async function saveEdit(input, cat, field) {
     const newVal = input.value.trim();
     if(newVal === (cat[field]||'')) { await loadCategories(); return; }
-    const { error } = await supabase.from('categorie').update({[field]: newVal}).eq('id_categoria', cat.id_categoria);
+    const { error } = await supabase.from('categorie')
+      .update({ [field]: newVal })
+      .eq('id_categoria', cat.id_categoria);
     if(error) return alert("Errore modifica: "+error.message);
     await loadCategories();
   }
 
-  async function deleteCategory(cat){
-    const { data: articoli } = await supabase.from('articoli').select('*').eq('id_categorie', cat.id_categoria);
+  async function deleteCategory(cat) {
+    const { data: articoli } = await supabase.from('articoli')
+      .select('*')
+      .eq('id_categorie', cat.id_categoria);
     if(articoli.length>0){ alert("Impossibile eliminare: esistono articoli in questa categoria."); return; }
     if(!confirm(`Eliminare categoria "${cat.cat_descrizione}"?`)) return;
-    const { error } = await supabase.from('categorie').delete().eq('id_categoria', cat.id_categoria);
+    const { error } = await supabase.from('categorie')
+      .delete()
+      .eq('id_categoria', cat.id_categoria);
     if(error) return alert("Errore cancellazione: "+error.message);
     await loadCategories();
   }
