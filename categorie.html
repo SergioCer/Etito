@@ -46,34 +46,34 @@
     border: 1px solid #ccc;
   }
 
-  #categoryList li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 3px 8px; /* meno spazio verticale */
-    border-bottom: 1px solid #ddd;
-  }
+#categoryList li {
+  display: flex;
+  align-items: center;
+  padding: 2px 6px; /* più compatto */
+  border-bottom: 1px solid #ddd;
+}
 
-  #categoryList li span.desc,
-  #categoryList li span.note {
-    cursor: pointer;
-  }
+#categoryList li span.desc,
+#categoryList li span.note {
+  cursor: pointer;
+}
 
-  #categoryList li span.desc { flex-grow: 1; }
-  #categoryList li span.note { flex-grow: 2; margin-left:10px; margin-right:10px; }
+#categoryList li span.desc { flex-grow: 1; }
+#categoryList li span.note { flex-grow: 2; margin-left:10px; margin-right:10px; }
 
-  .delete-btn {
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 3px 6px;
-    font-size: 0.9em;
-    width: 30px;
-    margin-left: auto; /* allinea a destra */
-    text-align: center;
-  }
+.delete-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 0.9em;
+  width: 30px;
+  margin-left: auto; /* allinea a destra */
+  display: flex;
+  justify-content: flex-end; /* testo parte da destra */
+}
 
   .delete-btn:disabled {
     background-color: #ccc;
@@ -164,7 +164,9 @@
     renderCategories(filtered);
   });
 
-  async function editField(span, cat, field){
+// click su campo descrizione/note
+async function editField(span, cat, field){
+  setTimeout(() => { // forziamo il click dopo gestione evento
     const input = document.createElement('input');
     input.type='text';
     input.value = cat[field] || '';
@@ -177,7 +179,8 @@
       if(e.key==='Escape') input.replaceWith(span);
     };
     input.onblur = async () => await saveEdit(input, cat, field);
-  }
+  }, 0);
+}
 
   async function saveEdit(input, cat, field){
     const newVal = input.value.trim();
