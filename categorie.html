@@ -5,7 +5,7 @@
 <title>Categorie</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  /* ---------------- Barra fissa in alto ---------------- */
+  /* Barra fissa in alto */
   #topBar {
     position: sticky;
     top: 0;
@@ -46,10 +46,28 @@
     border: 1px solid #ccc;
   }
 
-  /* ---------------- Lista categorie ---------------- */
+  /* Intestazione colonne */
+  #categoryHeader {
+    display: flex;
+    font-weight: bold;
+    background-color: #eee;
+    padding: 6px 10px;
+    border-bottom: 2px solid #4CAF50;
+    position: sticky;
+    top: 70px; /* sotto topBar e search */
+    z-index: 500;
+  }
+
+  #categoryHeader span { padding: 0 4px; }
+  #categoryHeader span.desc { flex-grow: 1; }
+  #categoryHeader span.note { flex-grow: 2; }
+  #categoryHeader span.del { width: 40px; text-align: center; }
+
+  /* Lista categorie */
   #categoryList {
-    margin-top: 10px;
+    margin-top: 0;
     padding: 0 20px;
+    list-style: none;
   }
 
   #categoryList li {
@@ -76,38 +94,14 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    padding: 3px 6px;
-    font-size: 0.9em;
+    padding: 2px 6px;
+    font-size: 0.85em;
   }
 
   .delete-btn:disabled {
     background-color: #ccc;
     cursor: not-allowed;
   }
-
-  #categoryList li.newCat input {
-    flex-grow: 1;
-    padding: 4px 6px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-
-  /* Intestazione colonne */
-  #categoryHeader {
-    display: flex;
-    font-weight: bold;
-    background-color: #eee;
-    padding: 6px 10px;
-    border-bottom: 2px solid #4CAF50;
-    position: sticky;
-    top: 70px; /* sotto topBar e search */
-    z-index: 500;
-  }
-
-  #categoryHeader span { padding: 0 4px; }
-  #categoryHeader span.desc { flex-grow: 1; }
-  #categoryHeader span.note { flex-grow: 2; }
-  #categoryHeader span.del { width: 50px; text-align: center; }
 </style>
 </head>
 <body>
@@ -149,7 +143,6 @@
     const ul = document.getElementById('categoryList');
     ul.innerHTML='';
 
-    // Lista filtrata
     const filtered = categories.filter(c => 
       c.cat_descrizione.toLowerCase().includes(filter.toLowerCase()) ||
       (c.cat_note && c.cat_note.toLowerCase().includes(filter.toLowerCase()))
@@ -179,23 +172,6 @@
 
       ul.appendChild(li);
     });
-
-    // Nuova categoria
-    const newLi = document.createElement('li');
-    newLi.className='newCat';
-    const input = document.createElement('input');
-    input.placeholder='Nuova categoria...';
-    input.onkeydown=async e=>{ if(e.key==='Enter'){ await addCategory(input.value); input.value=''; filterCategories(); } };
-    input.onblur=async ()=>{ if(input.value.trim()){ await addCategory(input.value); input.value=''; filterCategories(); } };
-    newLi.appendChild(input);
-    ul.appendChild(newLi);
-  }
-
-  async function addCategory(name){
-    name=name.trim(); if(!name) return;
-    const { data, error } = await supabase.from('categorie').insert([{cat_descrizione:name}]).select();
-    if(error) return alert("Errore aggiunta: "+error.message);
-    await loadCategories();
   }
 
   async function editField(span, cat, field){
@@ -210,7 +186,7 @@
 
   async function saveEdit(input, cat, field){
     const newVal=input.value.trim();
-    if(newVal === (cat[field] || '')) { await loadCategories(); return; }
+    if(newVal === (cat[field] || '')) { renderCategories(document.getElementById('searchCategory').value.toLowerCase()); return; }
     const { error } = await supabase.from('categorie').update({[field]:newVal}).eq('id_categoria',cat.id_categoria);
     if(error) return alert("Errore modifica: "+error.message);
     await loadCategories();
@@ -232,5 +208,6 @@
 
   loadCategories();
 </script>
+
 </body>
 </html>
