@@ -1,59 +1,52 @@
-body { 
-    font-family: sans-serif; 
-    margin: 20px; 
-    max-width: 900px; 
-    background: #f4f4f9; 
-}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Gestione Categorie</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-h1, h2 { color: #333; }
+<h1>Gestione Categorie</h1>
 
-section { 
-    padding: 15px 20px; 
-    margin-bottom: 25px; 
-    border-radius: 8px; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border-left: 6px solid #4CAF50; /* piccolo bordo verde per distinguere refresh */
-}
+<section id="categoriesSection">
+<h2>Categorie</h2>
+<input type="text" id="newCategory" placeholder="Nome categoria">
+<button onclick="addCategory()">Aggiungi Categoria</button>
+<ul id="categoryList"></ul>
+</section>
 
-#categoriesSection { background: #fff9f0; }
-#articlesSection { background: #f0fff4; }
-#listSection { background: #f0f4ff; }
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-input, select, button, textarea { 
-    margin: 8px 0; 
-    padding: 8px; 
-    width: 100%; 
-    box-sizing: border-box; 
-    border-radius: 5px; 
-    border: 1px solid #ccc; 
-}
+  const supabaseUrl = 'INSERISCI_LA_TUA_URL';
+  const supabaseKey = 'INSERISCI_LA_TUA_ANON_KEY';
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-button { 
-    background-color: #4CAF50; 
-    color: white; 
-    border: none; 
-    cursor: pointer; 
-    font-weight: bold; 
-}
+  async function loadCategories() {
+      const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
+      if (error) return alert("Errore caricamento categorie: " + error.message);
 
-button:hover { background-color: #45a049; }
+      const ul = document.getElementById('categoryList');
+      ul.innerHTML = '';
+      data.forEach(cat => {
+          const li = document.createElement('li');
+          li.textContent = cat.cat_descrizione;
+          ul.appendChild(li);
+      });
+  }
 
-table { 
-    border-collapse: collapse; 
-    margin-top: 15px; 
-    width: 100%; 
-    border-radius: 5px; 
-    overflow: hidden; 
-}
+  async function addCategory() {
+      const name = document.getElementById('newCategory').value.trim();
+      if (!name) return alert("Inserisci nome categoria");
+      const { data, error } = await supabase.from('categorie').insert([{ cat_descrizione: name }]).select();
+      if (error) return alert("Errore aggiunta categoria: " + error.message);
+      document.getElementById('newCategory').value = '';
+      await loadCategories();
+  }
 
-td, th { 
-    border: 1px solid #ddd; 
-    padding: 10px; 
-    text-align: left; 
-}
+  loadCategories();
+</script>
 
-tr:nth-child(even) { background-color: #f9f9f9; }
-tr:hover { background-color: #f1f1f1; }
-
-ul { list-style: none; padding-left: 0; }
-li { background: #eee; margin: 3px 0; padding: 5px 8px; border-radius: 4px; }
+</body>
+</html>
