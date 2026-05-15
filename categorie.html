@@ -15,8 +15,7 @@
 
   /* Header lista categorie */
 #categoryHeader {
-  display: grid;
-  grid-template-columns: 1fr 2fr 30px; /* desc | note | cancella */
+  display: flex;
   align-items: center;
   padding: 3px 8px;
   font-weight: bold;
@@ -25,9 +24,22 @@
   top: 88px;
   z-index: 998;
 }
-#categoryHeader span.desc { text-align: left; }
-#categoryHeader span.note { text-align: left; margin: 0 10px; }
-#categoryHeader span.del { text-align: center; }
+
+#categoryHeader span.desc {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+#categoryHeader span.note {
+  flex: 2 1 auto;
+  text-align: left;
+  margin: 0 5px; /* ridotto */
+}
+
+#categoryHeader span.del {
+  flex: 0 0 30px; /* larghezza fissa */
+  text-align: center;
+}
   
 </style>
 </head>
