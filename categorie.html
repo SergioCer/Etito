@@ -107,23 +107,24 @@ function renderCategories(list) {
   list.forEach(cat => {
     const li = document.createElement('li');
 
-    // Click su tutta la riga: seleziona la riga
+    // Funzione di selezione riga
     const selectRow = () => {
       if(selectedLi) selectedLi.classList.remove('selected');
       selectedLi = li;
       li.classList.add('selected');
     };
-    li.onclick = selectRow;
+
+    // Selezione riga anche se clicco su li stesso
+    li.onclick = () => selectRow();
 
     // Descrizione
     const desc = document.createElement('span');
     desc.className = 'desc';
     desc.textContent = cat.cat_descrizione;
-
     desc.onclick = e => {
-      e.stopPropagation();       // non propagare il click al li
-      selectRow();               // prima seleziona la riga
-      editField(desc, cat, 'cat_descrizione'); // poi permetti modifica
+      e.stopPropagation();      // non propagare il click al li
+      selectRow();              // seleziona la riga
+      editField(desc, cat, 'cat_descrizione'); // permette modifica
     };
     desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
     li.appendChild(desc);
@@ -131,10 +132,11 @@ function renderCategories(list) {
     // Note
     const note = document.createElement('span');
     note.className = 'note';
-    note.textContent = cat.cat_note || ''; // può essere vuoto
+    note.textContent = cat.cat_note || '';
     note.onclick = e => {
       e.stopPropagation();
-      if(selectedLi === li) editField(note, cat, 'cat_note'); // sempre modificabile
+      selectRow();              // seleziona la riga anche su Note
+      editField(note, cat, 'cat_note'); // permette modifica sempre
     };
     li.appendChild(note);
 
@@ -142,12 +144,16 @@ function renderCategories(list) {
     const delBtn = document.createElement('button');
     delBtn.className = 'delete-btn';
     delBtn.textContent = '❌';
-    delBtn.onclick = e => { e.stopPropagation(); deleteCategory(cat); };
+    delBtn.onclick = e => { 
+      e.stopPropagation(); 
+      selectRow();             // seleziona la riga anche se clicco cancella
+      deleteCategory(cat); 
+    };
     li.appendChild(delBtn);
 
     ul.appendChild(li);
   });
-}  
+}
 
   // Ricerca live
   const searchInput = document.getElementById('searchCategory');
