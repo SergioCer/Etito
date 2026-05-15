@@ -54,21 +54,19 @@
         span.textContent = cat.cat_descrizione + (cat.note ? ` (${cat.note})` : '');
         li.appendChild(span);
 
-        // Pulsante modifica
-        const editBtn = document.createElement('button');
-        editBtn.textContent = '✏️';
-        editBtn.title = "Modifica categoria";
-        editBtn.className = 'icon-btn';
-        editBtn.onclick = () => editCategory(cat);
-        li.appendChild(editBtn);
+// Pulsante modifica
+const editBtn = document.createElement('button');
+editBtn.textContent = '✏️';
+editBtn.classList.add('icon-btn');  // <-- nuova classe
+editBtn.onclick = () => editCategory(cat);
+li.appendChild(editBtn);
 
-        // Pulsante cancella
-        const delBtn = document.createElement('button');
-        delBtn.textContent = '🗑️';
-        delBtn.title = "Cancella categoria";
-        delBtn.className = 'icon-btn';
-        delBtn.onclick = () => deleteCategory(cat.id_categoria);
-        li.appendChild(delBtn);
+// Pulsante cancella
+const delBtn = document.createElement('button');
+delBtn.textContent = '🗑️';
+delBtn.classList.add('icon-btn');   // <-- nuova classe
+delBtn.onclick = () => deleteCategory(cat.id_categoria);
+li.appendChild(delBtn);
 
         ul.appendChild(li);
       });
