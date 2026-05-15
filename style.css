@@ -86,14 +86,14 @@ button:hover {
     border-radius: 4px;
     margin-left: 10px;
     width: auto; /* non full width */
-    background-color: #FF2929;
+    background-color: #FF9C2A;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 .delete-btn:hover {
-    background-color: #FF6929;
+    background-color: #FF2929;
 }
 
 /* ------------------------ TABELLE ------------------------ */
