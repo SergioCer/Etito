@@ -159,7 +159,49 @@ function renderCategories(list) {
 
     ul.appendChild(li);
   });
-}
+
+// Riga per nuova categoria
+const newLi = document.createElement('li');
+newLi.className = 'new-category';
+
+const descInput = document.createElement('input');
+descInput.type = 'text';
+descInput.placeholder = 'Nuova categoria...';
+descInput.style.flex = '1';
+newLi.appendChild(descInput);
+
+const noteInput = document.createElement('input');
+noteInput.type = 'text';
+noteInput.placeholder = 'Note (facoltativo)';
+noteInput.style.flex = '2';
+newLi.appendChild(noteInput);
+
+// Salvataggio al tasto Enter
+descInput.onkeydown = noteInput.onkeydown = async (e) => {
+    if (e.key === 'Enter') {
+        const descr = descInput.value.trim();
+        const note = noteInput.value.trim();
+        if(descr) {
+            await addCategory({ cat_descrizione: descr, cat_note: note });
+            descInput.value = '';
+            noteInput.value = '';
+        }
+    }
+};
+
+// Salvataggio al blur
+descInput.onblur = noteInput.onblur = async () => {
+    const descr = descInput.value.trim();
+    const note = noteInput.value.trim();
+    if(descr) {
+        await addCategory({ cat_descrizione: descr, cat_note: note });
+        descInput.value = '';
+        noteInput.value = '';
+    }
+};
+
+ul.appendChild(newLi);
+  }
 
   // Ricerca live
   const searchInput = document.getElementById('searchCategory');
@@ -220,6 +262,13 @@ async function editField(span, cat, field) {
     await loadCategories();
   }
 
+async function addCategory(obj){
+    if(!obj.cat_descrizione) return;
+    const { data, error } = await supabase.from('categorie').insert([obj]).select();
+    if(error) return alert("Errore aggiunta: " + error.message);
+    await loadCategories();
+}
+  
   loadCategories();
 </script>
 
