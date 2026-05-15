@@ -1,114 +1,101 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<title>Gestione Categorie</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<h1>Gestione Categorie</h1>
-
-<p><a href="index.html">← Torna alla Home</a></p>
-
-<section id="categoriesSection">
-  <h2>Categorie</h2>
-
-  <!-- Input per aggiungere nuova categoria -->
-  <input type="text" id="newCategory" placeholder="Nome categoria">
-  <button class="add-btn" onclick="addCategory()">Aggiungi</button>
-
-  <!-- Filtro di ricerca -->
-  <input type="text" id="searchCategory" placeholder="Cerca categoria..." oninput="filterCategories()">
-
-  <!-- Lista categorie -->
-  <ul id="categoryList"></ul>
-</section>
-
 <script type="module">
-  import { supabase } from './supabase.js'; // usa il file centralizzato
+import { supabase } from './supabase.js';
 
-  let categories = [];
+let categories = []; // memoria locale categorie
 
-  // Carica tutte le categorie
-  async function loadCategories() {
-    const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
+// Carica tutte le categorie da Supabase
+async function loadCategories() {
+    const { data, error } = await supabase
+        .from('categorie')
+        .select('*')
+        .order('id_categoria', { ascending: true });
     if (error) return alert("Errore caricamento categorie: " + error.message);
 
     categories = data || [];
     renderCategories();
-  }
+}
 
-  // Renderizza lista categorie
-  function renderCategories(filter = '') {
+// Renderizza la lista categorie
+function renderCategories(filter = '') {
     const ul = document.getElementById('categoryList');
     ul.innerHTML = '';
 
     categories
-      .filter(cat => cat.cat_descrizione.toLowerCase().includes(filter.toLowerCase()))
-      .forEach(cat => {
-        const li = document.createElement('li');
+        .filter(cat => cat.cat_descrizione.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(cat => {
+            const li = document.createElement('li');
 
-        // contenuto principale
-        const span = document.createElement('span');
-        span.textContent = cat.cat_descrizione + (cat.note ? ` (${cat.note})` : '');
-        li.appendChild(span);
+            // contenitore testo + note
+            const textDiv = document.createElement('div');
+            textDiv.style.flex = '1';
+            textDiv.textContent = cat.cat_descrizione;
+            li.appendChild(textDiv);
 
-// Pulsante modifica
-const editBtn = document.createElement('button');
-editBtn.textContent = '✏️';
-editBtn.classList.add('icon-btn');  // <-- nuova classe
-editBtn.onclick = () => editCategory(cat);
-li.appendChild(editBtn);
+            // Pulsante modifica
+            const editBtn = document.createElement('button');
+            editBtn.textContent = '✏️';
+            editBtn.classList.add('icon-btn');
+            editBtn.onclick = () => editCategory(cat);
+            li.appendChild(editBtn);
 
-// Pulsante cancella
-const delBtn = document.createElement('button');
-delBtn.textContent = '🗑️';
-delBtn.classList.add('icon-btn');   // <-- nuova classe
-delBtn.onclick = () => deleteCategory(cat.id_categoria);
-li.appendChild(delBtn);
+            // Pulsante cancella
+            const delBtn = document.createElement('button');
+            delBtn.textContent = '🗑️';
+            delBtn.classList.add('icon-btn');
+            delBtn.onclick = () => deleteCategory(cat.id_categoria);
+            li.appendChild(delBtn);
 
-        ul.appendChild(li);
-      });
-  }
+            ul.appendChild(li);
+        });
+}
 
-  async function addCategory() {
+// Aggiungi categoria
+async function addCategory() {
     const name = document.getElementById('newCategory').value.trim();
     if (!name) return alert("Inserisci nome categoria");
 
-    const { data, error } = await supabase.from('categorie').insert([{ cat_descrizione: name }]).select();
+    const { data, error } = await supabase
+        .from('categorie')
+        .insert([{ cat_descrizione: name }])
+        .select();
     if (error) return alert("Errore aggiunta categoria: " + error.message);
 
     document.getElementById('newCategory').value = '';
     await loadCategories();
-  }
+}
 
-  async function editCategory(cat) {
+// Modifica categoria
+async function editCategory(cat) {
     const newName = prompt("Modifica nome categoria:", cat.cat_descrizione);
     if (!newName || newName.trim() === cat.cat_descrizione) return;
 
-    const { error } = await supabase.from('categorie').update({ cat_descrizione: newName.trim() }).eq('id_categoria', cat.id_categoria);
+    const { error } = await supabase
+        .from('categorie')
+        .update({ cat_descrizione: newName.trim() })
+        .eq('id_categoria', cat.id_categoria);
     if (error) return alert("Errore modifica categoria: " + error.message);
 
     await loadCategories();
-  }
+}
 
-  async function deleteCategory(id) {
+// Cancella categoria
+async function deleteCategory(id) {
     if (!confirm("Sei sicuro di voler cancellare questa categoria?")) return;
 
-    const { error } = await supabase.from('categorie').delete().eq('id_categoria', id);
+    const { error } = await supabase
+        .from('categorie')
+        .delete()
+        .eq('id_categoria', id);
     if (error) return alert("Errore cancellazione categoria: " + error.message);
 
     await loadCategories();
-  }
+}
 
-  function filterCategories() {
-    const filter = document.getElementById('searchCategory').value;
-    renderCategories(filter);
-  }
+// Filtro di ricerca in tempo reale
+document.getElementById('searchCategory').addEventListener('input', (e) => {
+    renderCategories(e.target.value);
+});
 
-  loadCategories();
+// Caricamento iniziale
+loadCategories();
 </script>
-
-</body>
-</html>
