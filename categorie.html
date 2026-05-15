@@ -1,3 +1,31 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Gestione Categorie</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Gestione Categorie</h1>
+
+<section id="categoriesSection">
+  <h2>Categorie</h2>
+
+  <!-- Input per aggiungere nuova categoria -->
+  <input type="text" id="newCategory" placeholder="Nome categoria">
+  <button onclick="addCategory()">Aggiungi Categoria</button>
+
+  <!-- Filtro di ricerca -->
+  <input type="text" id="searchCategory" placeholder="Cerca categoria...">
+
+  <!-- Lista categorie -->
+  <ul id="categoryList"></ul>
+</section>
+
+<!-- Ritorno alla home -->
+<p><a href="index.html">← Torna alla Home</a></p>
+
 <script type="module">
 import { supabase } from './supabase.js';
 
@@ -25,7 +53,7 @@ function renderCategories(filter = '') {
         .forEach(cat => {
             const li = document.createElement('li');
 
-            // contenitore testo + note
+            // Testo della categoria
             const textDiv = document.createElement('div');
             textDiv.style.flex = '1';
             textDiv.textContent = cat.cat_descrizione;
@@ -35,6 +63,7 @@ function renderCategories(filter = '') {
             const editBtn = document.createElement('button');
             editBtn.textContent = '✏️';
             editBtn.classList.add('icon-btn');
+            editBtn.title = 'Modifica categoria';
             editBtn.onclick = () => editCategory(cat);
             li.appendChild(editBtn);
 
@@ -42,6 +71,7 @@ function renderCategories(filter = '') {
             const delBtn = document.createElement('button');
             delBtn.textContent = '🗑️';
             delBtn.classList.add('icon-btn');
+            delBtn.title = 'Elimina categoria';
             delBtn.onclick = () => deleteCategory(cat.id_categoria);
             li.appendChild(delBtn);
 
@@ -99,3 +129,6 @@ document.getElementById('searchCategory').addEventListener('input', (e) => {
 // Caricamento iniziale
 loadCategories();
 </script>
+
+</body>
+</html>
