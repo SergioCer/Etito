@@ -262,13 +262,26 @@ async function editField(span, cat, field) {
     await loadCategories();
   }
 
-async function addCategory(obj){
-    if(!obj.cat_descrizione) return;
-    const { data, error } = await supabase.from('categorie').insert([obj]).select();
-    if(error) return alert("Errore aggiunta: " + error.message);
-    await loadCategories();
-}
-  
+async function addCategory(name, note = '') {
+  name = name.trim();
+  if (!name) return;
+
+  // Controlla se la categoria esiste già (case insensitive)
+  const existing = categories.find(c => c.cat_descrizione.toLowerCase() === name.toLowerCase());
+  if (existing) {
+    alert(`La categoria "${name}" esiste già!`);
+    return;
+  }
+
+  try {
+    // Inserimento senza select() per evitare warning falso
+    await supabase.from('categorie').insert({ cat_descrizione: name, cat_note: note });
+    await loadCategories(); // aggiorna lista
+  } catch (err) {
+    alert("Errore aggiunta categoria: " + err.message);
+  }
+}  
+ 
   loadCategories();
 </script>
 
