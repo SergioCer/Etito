@@ -58,4 +58,59 @@ function renderCategories(list){
     const note=document.createElement('span');
     note.className='note';
     note.textContent=cat.cat_note||'';
-    if(cat.cat_note!==null) note.onclick=e=>{ e.stopPropagation(); if(selected
+    if(cat.cat_note!==null) note.onclick=e=>{ e.stopPropagation(); if(selectedLi===li) editField(note,cat,'cat_note'); };
+    li.appendChild(note);
+
+    // Cancella
+    const delBtn=document.createElement('button');
+    delBtn.className='delete-btn';
+    delBtn.textContent='❌';
+    delBtn.onclick=e=>{ e.stopPropagation(); deleteCategory(cat); };
+    li.appendChild(delBtn);
+
+    ul.appendChild(li);
+  });
+}
+
+// Ricerca live
+const searchInput=document.getElementById('searchCategory');
+searchInput.focus();
+searchInput.addEventListener('input',()=>{ 
+  const filter=searchInput.value.toLowerCase(); 
+  renderCategories(categories.filter(c=>c.cat_descrizione.toLowerCase().includes(filter))); 
+});
+
+async function editField(span,cat,field){
+  if(field==='cat_note'&&cat.cat_note===null) return;
+  const input=document.createElement('input');
+  input.type='text';
+  input.value=cat[field]||'';
+  input.style.flexGrow=(field==='cat_descrizione')?'1':'2';
+  span.replaceWith(input);
+  input.focus();
+  input.select();
+  input.onkeydown=async e=>{ if(e.key==='Enter') await saveEdit(input,cat,field); if(e.key==='Escape') input.replaceWith(span); };
+  input.onblur=async()=>await saveEdit(input,cat,field);
+}
+
+async function saveEdit(input,cat,field){
+  const newVal=input.value.trim();
+  if(newVal===(cat[field]||'')){ await loadCategories(); return; }
+  const { error } = await supabase.from('categorie').update({[field]:newVal}).eq('id_categoria',cat.id_categoria);
+  if(error) return alert("Errore modifica: "+error.message);
+  await loadCategories();
+}
+
+async function deleteCategory(cat){
+  const { data: articoli } = await supabase.from('articoli').select('*').eq('id_categorie',cat.id_categoria);
+  if(articoli.length>0){ alert("Impossibile eliminare: esistono articoli in questa categoria."); return; }
+  if(!confirm(`Eliminare categoria "${cat.cat_descrizione}"?`)) return;
+  const { error } = await supabase.from('categorie').delete().eq('id_categoria',cat.id_categoria);
+  if(error) return alert("Errore cancellazione: "+error.message);
+  await loadCategories();
+}
+
+loadCategories();
+</script>
+</body>
+</html>
