@@ -3,23 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Gestione Articoli e Categorie</title>
-<style>
-body { font-family: sans-serif; margin: 20px; max-width: 900px; background: #f4f4f9; }
-h1, h2 { color: #333; }
-section { padding: 15px 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
-#categoriesSection { background: #fff9f0; }
-#articlesSection { background: #f0fff4; }
-#listSection { background: #f0f4ff; }
-input, select, button, textarea { margin: 8px 0; padding: 8px; width: 100%; box-sizing: border-box; border-radius: 5px; border: 1px solid #ccc; }
-button { background-color: #4CAF50; color: white; border: none; cursor: pointer; font-weight: bold; }
-button:hover { background-color: #45a049; }
-table { border-collapse: collapse; margin-top: 15px; width: 100%; border-radius: 5px; overflow: hidden; }
-td, th { border: 1px solid #ddd; padding: 10px; text-align: left; }
-tr:nth-child(even) { background-color: #f9f9f9; }
-tr:hover { background-color: #f1f1f1; }
-ul { list-style: none; padding-left: 0; }
-li { background: #eee; margin: 3px 0; padding: 5px 8px; border-radius: 4px; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -31,22 +15,22 @@ li { background: #eee; margin: 3px 0; padding: 5px 8px; border-radius: 4px; }
 </section>
 
 <section id="articlesSection">
-<h2>Articoli</h2>
-<input type="text" id="articleDesc" placeholder="Descrizione articolo">
-<select id="categorySelect">
-  <option value="">-- Seleziona categoria --</option>
-</select>
-<button onclick="addArticle()">Aggiungi Articolo</button>
+  <h2>Articoli</h2>
+  <input type="text" id="articleDesc" placeholder="Descrizione articolo">
+  <select id="categorySelect">
+    <option value="">-- Seleziona categoria --</option>
+  </select>
+  <button onclick="addArticle()">Aggiungi Articolo</button>
 </section>
 
 <section id="listSection">
-<h2>Lista Articoli</h2>
-<table id="articleTable">
-  <thead>
-    <tr><th>ID Articolo</th><th>Descrizione</th><th>Categoria</th></tr>
-  </thead>
-  <tbody></tbody>
-</table>
+  <h2>Lista Articoli</h2>
+  <table id="articleTable">
+    <thead>
+      <tr><th>ID Articolo</th><th>Descrizione</th><th>Categoria</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </section>
 
 <script type="module">
@@ -60,30 +44,14 @@ li { background: #eee; margin: 3px 0; padding: 5px 8px; border-radius: 4px; }
       const { data, error } = await supabase.from('categorie').select('*').order('id_categoria', { ascending: true });
       if (error) return alert("Errore caricamento categorie: " + error.message);
 
-      const ul = document.getElementById('categoryList');
       const select = document.getElementById('categorySelect');
-      ul.innerHTML = '';
       select.innerHTML = '<option value="">-- Seleziona categoria --</option>';
-
       data.forEach(cat => {
-          const li = document.createElement('li');
-          li.textContent = cat.cat_descrizione;
-          ul.appendChild(li);
-
           const option = document.createElement('option');
           option.value = cat.id_categoria;
           option.textContent = cat.cat_descrizione;
           select.appendChild(option);
       });
-  }
-
-  async function addCategory() {
-      const name = document.getElementById('newCategory').value.trim();
-      if (!name) return alert("Inserisci nome categoria");
-      const { data, error } = await supabase.from('categorie').insert([{ cat_descrizione: name }]).select();
-      if (error) return alert("Errore aggiunta categoria: " + error.message);
-      document.getElementById('newCategory').value = '';
-      await loadCategories();
   }
 
   async function loadArticles() {
