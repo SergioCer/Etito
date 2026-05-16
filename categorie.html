@@ -259,7 +259,7 @@ async function editField(span, cat, field) {
     const { data: articoli, error: err1 } = await supabase
       .from('articoli')
       .select('*')
-      .eq('id_categorie', cat.id_categoria);
+      .eq('id_categoria', cat.id_categoria);
     if(err1) throw err1;
     if(articoli.length > 0){ 
       alert("Impossibile eliminare: esistono articoli in questa categoria."); 
