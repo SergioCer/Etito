@@ -118,10 +118,11 @@ button:hover {
 
 /* Pulsanti piccoli a fianco di liste */
 .delete-btn {
-    padding: 3px 6px;
-    font-size: 0.9em;
+    padding: 2px 5px;
+    font-size: 0.8em;
     border-radius: 4px;
     margin-left: 10px;
+    height: 20px;       /* forza altezza */
     width: auto; /* non full width */
     background-color: #FF9C2A;
     color: white;
@@ -215,7 +216,10 @@ ul#categoryList li span.note {
 
 ul#categoryList li button {
     margin-left: 5px;
-    flex: 0 0 20px; /* forza dimensione pulsante cancella */
+    flex: 0 0 auto;   /* lascia l’altezza automatica */
+    padding: 2px 5px; /* padding piccolo */
+    height: 20px;     /* altezza fissa se vuoi */
+    font-size: 0.9em; /* adatta il font al nuovo pulsante */
 }
 
 /* ------------------------ FILTRO / INPUT RICERCA ------------------------ */
