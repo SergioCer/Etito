@@ -169,7 +169,7 @@ ul#categoryList li {
     align-items: center;
     background: #fff;
     margin: 5px 0;
-    padding: 8px 12px;
+    padding: 4px 12px;
     border-radius: 5px;
     border: 1px solid #ddd;
     transition: background-color 0.2s;
@@ -187,6 +187,8 @@ ul#categoryList li span.note {
     user-select: none;
     flex-shrink: 0;
     min-width: 50px; /* garantisce area cliccabile anche se vuoto */
+    border-left: 1px solid #ccc;
+    padding-left: 5px;
 }
 
 ul#categoryList li span.desc {
@@ -197,6 +199,7 @@ ul#categoryList li span.desc {
     min-height: 1em;
     display: inline-block;
 }
+
 ul#categoryList li span.note {
     flex: 2;
     margin: 0 10px;
