@@ -152,7 +152,11 @@ function renderCategories(list) {
     delBtn.textContent = '❌';
     delBtn.onclick = e => { 
       e.stopPropagation(); 
+        // ---- CONTROLLO 1: tipo e valore dell'ID ----
+      console.log("ID selezionato per cancellazione:", cat.id_categoria);
+      console.log("Tipo ID:", typeof cat.id_categoria);
       console.log("Clic su cancella categoria ID:", cat.id_categoria); /* visualizza in consoll la categoria da cancellare */
+      
       deleteCategory(cat); 
     };
     li.appendChild(delBtn);
