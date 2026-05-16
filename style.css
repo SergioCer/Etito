@@ -291,6 +291,16 @@ ul#categoryList li button {
         text-align: left;
     }
 
+#categoryHeader span.note {
+  border-left: 1px solid #ccc; /* linea prima di Note */
+  padding-left: 5px;           /* spazio dal bordo */
+}
+
+#categoryHeader span.del {
+  border-left: 1px solid #ccc; /* linea prima di Cancella */
+  padding-left: 5px;
+}
+    
     /* Span della lista categorie */
     ul#categoryList li span.desc,
     ul#categoryList li span.note {
@@ -299,6 +309,16 @@ ul#categoryList li button {
         display: inline-block;
     }
 
+ul#categoryList li span.note {
+  border-left: 1px solid #ccc;
+  padding-left: 5px;
+}
+
+ul#categoryList li span.del {
+  border-left: 1px solid #ccc;
+  padding-left: 5px;
+}
+    
     ul#categoryList li button.delete-btn {
         flex-basis: auto;
         width: 30px;
