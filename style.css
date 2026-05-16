@@ -170,7 +170,7 @@ ul#categoryList li {
     align-items: center;
     background: #fff;
     margin: 5px 0;
-    padding: 2px 12px;
+    padding: 1px 6px;
     border-radius: 5px;
     border: 1px solid #ddd;
     transition: background-color 0.2s;
@@ -310,8 +310,9 @@ ul#categoryList li button {
     }
 
     ul#categoryList li button.delete-btn {
+        padding: 1px 4px
         flex-basis: auto;
-        width: 30px;
+        width: 20px;
         margin: 2px 0 0 auto; /* allinea a destra */
     }
 }
