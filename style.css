@@ -218,7 +218,36 @@ ul#categoryList li button {
     margin-bottom: 10px;
 }
 
-/* ------------------------ RESPONSIVE ------------------------ */
+/* ------------------------ X SU CAMPO DI RICERCA ------------------------ */
+/* Wrapper generico per input di ricerca con X */
+.searchWrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%; /* si adatta al contenitore */
+}
+
+.searchWrapper input.search {
+  width: 100%;
+  padding-right: 25px; /* spazio per la X */
+  box-sizing: border-box;
+}
+
+.searchWrapper .clear {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1em;
+  color: #888;
+  display: none; /* nascosta di default */
+}
+
+.searchWrapper .clear:hover {
+  color: #444;
+}
+
 /* ------------------------ RESPONSIVE ------------------------ */
 @media (max-width: 600px) {
     body { 
