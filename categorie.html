@@ -47,11 +47,11 @@
 
 <div id="topBar">
   <a href="index.html">← Home</a>
-  <h2>Categorie</h2>
+  <h2>e</h2>
 </div>
 
 <div id="searchWrapper">
-  <input type="text" id="searchCategory" placeholder="Cerca categoria...">
+  <input type="text" id="searchCategory" placeholder="Cerca a...">
 </div>
 
 <div id="categoryHeader">
@@ -152,7 +152,7 @@ function renderCategories(list) {
     delBtn.textContent = '❌';
     delBtn.onclick = e => { 
       e.stopPropagation(); 
-      selectRow(); // seleziona la riga prima di cancellare
+      console.log("Clic su cancella categoria ID:", cat.id_categoria); /* visualizza in consoll la categoria da cancellare */
       deleteCategory(cat); 
     };
     li.appendChild(delBtn);
@@ -250,17 +250,39 @@ async function editField(span, cat, field) {
 
   // Eliminazione categoria
   async function deleteCategory(cat) {
-    const { data: articoli } = await supabase.from('articoli')
+  try {
+    // Controlla articoli collegati
+    const { data: articoli, error: err1 } = await supabase
+      .from('articoli')
       .select('*')
       .eq('id_categorie', cat.id_categoria);
-    if(articoli.length>0){ alert("Impossibile eliminare: esistono articoli in questa categoria."); return; }
+    if(err1) throw err1;
+    if(articoli.length > 0){ 
+      alert("Impossibile eliminare: esistono articoli in questa categoria."); 
+      return; 
+    }
+
+    // Conferma utente
     if(!confirm(`Eliminare categoria "${cat.cat_descrizione}"?`)) return;
+
+    // Cancellazione
     const { error } = await supabase.from('categorie')
       .delete()
       .eq('id_categoria', cat.id_categoria);
-    if(error) return alert("Errore cancellazione: "+error.message);
+    if(error) throw error;
+
+    // Resetta selezione
+    if(selectedId === cat.id_categoria) {
+      selectedLi = null;
+      selectedId = null;
+    }
+
+    // Ricarica lista
     await loadCategories();
+  } catch(e) {
+    alert("Errore cancellazione: " + e.message);
   }
+}
 
 async function addCategory(name, note = '') {
   name = name.trim();
