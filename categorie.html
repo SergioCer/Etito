@@ -50,10 +50,11 @@
   <h2>e</h2>
 </div>
 
-<div id="searchWrapper">
-  <input type="text" id="searchCategory" placeholder="Cerca a...">
+<div class="searchWrapper">
+  <input type="text" class="search" placeholder="Cerca categoria...">
+  <span class="clear">✖</span>
 </div>
-
+  
 <div id="categoryHeader">
   <span class="desc">Descrizione</span>
   <span class="note">Note</span>
@@ -307,7 +308,34 @@ async function addCategory(name, note = '') {
     alert("Errore aggiunta categoria: " + err.message);
   }
 }  
- 
+
+// Seleziona tutti i campi di ricerca generici
+document.querySelectorAll('.searchWrapper').forEach(wrapper => {
+  const input = wrapper.querySelector('input.search');
+  const clearBtn = wrapper.querySelector('.clear');
+
+  // Mostra/nascondi X e filtra
+  input.addEventListener('input', () => {
+    const filter = input.value.toLowerCase();
+    
+    // esempio per categorie (puoi modificare per altri elenchi)
+    const filtered = categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter));
+    renderCategories(filtered);
+
+    // Mostra X solo se ci sono almeno 2 lettere
+    clearBtn.style.display = (input.value.length >= 2) ? 'block' : 'none';
+  });
+
+  // Click sulla X cancella input e aggiorna lista
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    renderCategories(categories); // mostra tutti
+    clearBtn.style.display = 'none';
+    input.focus();
+  });
+});
+  
+  
   loadCategories();
 </script>
 
