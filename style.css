@@ -186,7 +186,7 @@ ul#categoryList li span.note {
     cursor: pointer;
     user-select: none;
     flex-shrink: 0;
-    min-width: 50px; /* garantisce area cliccabile anche se vuoto */
+    min-width: 20px; /* garantisce area cliccabile anche se vuoto */
     border-left: 1px solid #ccc;
     padding-left: 5px;
 }
@@ -195,7 +195,7 @@ ul#categoryList li span.desc {
     flex: 1;
     cursor: pointer;
     user-select: none;
-    min-width: 50px;
+    min-width: 20px;
     min-height: 1em;
     display: inline-block;
 }
