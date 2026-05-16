@@ -209,13 +209,13 @@ ul.appendChild(newLi);
   }
 
   // Ricerca live
-  const searchInput = document.getElementById('searchCategory');
-  searchInput.focus();
-  searchInput.addEventListener('input', () => {
-    const filter = searchInput.value.toLowerCase();
-    const filtered = categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter));
-    renderCategories(filtered);
-  });
+ //   const searchInput = document.getElementById('searchCategory');
+//    searchInput.focus();
+//    searchInput.addEventListener('input', () => {
+//    const filter = searchInput.value.toLowerCase();
+//    const filtered = categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter));
+//    renderCategories(filtered);
+//    });
 
   // Modifica campo
 async function editField(span, cat, field) {
