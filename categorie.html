@@ -182,40 +182,45 @@ noteInput.style.flex = '2';
 newLi.appendChild(noteInput);
 
 // Salvataggio al tasto Enter o cambio campo
-let skipBlur = false; // flag per evitare doppio inserimento
+let skipBlur = false; // evita doppio inserimento
 
-descInput.onkeydown = noteInput.onkeydown = async (e) => {
-  if (e.key === 'Enter') {
-    skipBlur = true;
-    const descr = descInput.value.trim();
-    const note = noteInput.value.trim();
-    if (descr) await addCategory(descr, note);
+// Funzione unica per aggiungere la categoria
+const handleNewCategory = async () => {
+  const descr = descInput.value.trim();
+  const note = noteInput.value.trim();
+  if (!descr) return;
+
+  // Blocca blur finché finiamo
+  skipBlur = true;
+
+  try {
+    await addCategory(descr, note); // qui avviene il controllo duplicati e inserimento
+  } finally {
+    // Pulizia input e sblocco flag
     descInput.value = '';
     noteInput.value = '';
     skipBlur = false;
   }
 };
 
-descInput.onblur = noteInput.onblur = async () => {
-  if (skipBlur) return; // evita doppio inserimento
-  const descr = descInput.value.trim();
-  const note = noteInput.value.trim();
-  if (descr) await addCategory(descr, note);
-  descInput.value = '';
-  noteInput.value = '';
-};
+// KEYDOWN Enter
+descInput.addEventListener('keydown', async e => {
+  if(e.key === 'Enter') await handleNewCategory();
+});
+noteInput.addEventListener('keydown', async e => {
+  if(e.key === 'Enter') await handleNewCategory();
+});
+
+// BLUR
+descInput.addEventListener('blur', async () => {
+  if(!skipBlur) await handleNewCategory();
+});
+noteInput.addEventListener('blur', async () => {
+  if(!skipBlur) await handleNewCategory();
+});
 
 ul.appendChild(newLi);
   }
-
-  // Ricerca live
- //   const searchInput = document.getElementById('searchCategory');
-//    searchInput.focus();
-//    searchInput.addEventListener('input', () => {
-//    const filter = searchInput.value.toLowerCase();
-//    const filtered = categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter));
-//    renderCategories(filtered);
-//    });
 
   // Modifica campo
 async function editField(span, cat, field) {
