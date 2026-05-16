@@ -187,7 +187,7 @@ descInput.onkeydown = noteInput.onkeydown = async (e) => {
         const descr = descInput.value.trim();
         const note = noteInput.value.trim();
         if(descr) {
-            await addCategory({ descr, note });
+            await addCategory(descr, note);
             descInput.value = '';
             noteInput.value = '';
         }
@@ -199,7 +199,7 @@ descInput.onblur = noteInput.onblur = async () => {
     const descr = descInput.value.trim();
     const note = noteInput.value.trim();
     if(descr) {
-        await addCategory({ descr, note });
+        await addCategory(descr, note);
         descInput.value = '';
         noteInput.value = '';
     }
