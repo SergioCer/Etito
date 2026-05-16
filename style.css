@@ -189,6 +189,9 @@ ul#categoryList li span.note {
     min-width: 20px; /* garantisce area cliccabile anche se vuoto */
     border-left: 1px solid #ccc;
     padding-left: 5px;
+    white-space: nowrap;         /* non andare a capo */
+    overflow: hidden;            /* taglia il contenuto in eccesso */
+    text-overflow: ellipsis;     /* mostra "..." alla fine */
 }
 
 ul#categoryList li span.desc {
