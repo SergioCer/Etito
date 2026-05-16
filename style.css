@@ -212,7 +212,7 @@ ul#categoryList li span.note {
 
 ul#categoryList li button {
     margin-left: 5px;
-    flex: 0 0 30px; /* forza dimensione pulsante cancella */
+    flex: 0 0 20px; /* forza dimensione pulsante cancella */
 }
 
 /* ------------------------ FILTRO / INPUT RICERCA ------------------------ */
