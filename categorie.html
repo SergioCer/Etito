@@ -181,28 +181,28 @@ noteInput.placeholder = 'Note (facoltativo)';
 noteInput.style.flex = '2';
 newLi.appendChild(noteInput);
 
-// Salvataggio al tasto Enter
-descInput.onkeydown = noteInput.onkeydown = async (e) => {
-    if (e.key === 'Enter') {
-        const descr = descInput.value.trim();
-        const note = noteInput.value.trim();
-        if(descr) {
-            await addCategory(descr, note);
-            descInput.value = '';
-            noteInput.value = '';
-        }
-    }
-};
+// Salvataggio al tasto Enter o cambio campo
+let skipBlur = false; // flag per evitare doppio inserimento
 
-// Salvataggio al blur
-descInput.onblur = noteInput.onblur = async () => {
+descInput.onkeydown = noteInput.onkeydown = async (e) => {
+  if (e.key === 'Enter') {
+    skipBlur = true;
     const descr = descInput.value.trim();
     const note = noteInput.value.trim();
-    if(descr) {
-        await addCategory(descr, note);
-        descInput.value = '';
-        noteInput.value = '';
-    }
+    if (descr) await addCategory(descr, note);
+    descInput.value = '';
+    noteInput.value = '';
+    skipBlur = false;
+  }
+};
+
+descInput.onblur = noteInput.onblur = async () => {
+  if (skipBlur) return; // evita doppio inserimento
+  const descr = descInput.value.trim();
+  const note = noteInput.value.trim();
+  if (descr) await addCategory(descr, note);
+  descInput.value = '';
+  noteInput.value = '';
 };
 
 ul.appendChild(newLi);
