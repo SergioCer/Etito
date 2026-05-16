@@ -47,7 +47,7 @@ h2 {
   /* Ricerca fissa sotto barra */
   #searchWrapper {
     position: sticky;
-    top: 52px;
+    top: 60px;
     background: #f4f4f9;
     padding: 5px 20px;
     border-bottom: 1px solid #ccc;
