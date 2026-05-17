@@ -158,9 +158,10 @@ function renderCategories(list) {
     return;
   }
 
-    const deleteBtn = document.getElementById('delete-Btn');
+  /* pulsante cancella */  
+  const deleteBtn = document.getElementById('delete-Btn');
 
-  // Controllo articoli collegati
+  /* Controllo articoli collegati */
   supabase.from('articoli')
     .select('*')
     .eq('id_categoria', cat.id_categoria)
@@ -367,7 +368,15 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   const input = wrapper.querySelector('input.search');
   const clearBtn = wrapper.querySelector('.clear');
 
-  // Mostra/nascondi X e filtra
+  // Funzione per mostrare/nascondere X
+  function toggleClear() {
+    clearBtn.style.display = (input.value.length >= 2) ? 'block' : 'none';
+  }
+
+  // Controllo iniziale appena carica la pagina
+  toggleClear();
+
+  // Aggiorna X quando l'utente digita
   input.addEventListener('input', () => {
     const filter = input.value.toLowerCase();
     
@@ -375,15 +384,14 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
     const filtered = categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter));
     renderCategories(filtered);
 
-    // Mostra X solo se ci sono almeno 2 lettere
-    clearBtn.style.display = (input.value.length >= 2) ? 'block' : 'none';
+    toggleClear();
   });
 
   // Click sulla X cancella input e aggiorna lista
   clearBtn.addEventListener('click', () => {
     input.value = '';
     renderCategories(categories); // mostra tutti
-    clearBtn.style.display = 'none';
+    toggleClear();
     input.focus();
   });
 });
