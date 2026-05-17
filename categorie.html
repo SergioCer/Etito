@@ -68,9 +68,9 @@
   let selectedLi = null;
   let selectedId = null;
   let editingInput = null; // nuovo: tiene traccia se stiamo modificando
-  updateDeleteButton(null); // Disabilita il pulsante finché non selezioni nulla */
+  // Pulsante delete
+  const deleteBtn = document.getElementById('delete-Btn');  
 
- 
   // Carica tutte le categorie
   async function loadCategories() {
     const { data, error } = await supabase
@@ -158,9 +158,6 @@ function renderCategories(list) {
     return;
   }
 
-  /* pulsante cancella */  
-  const deleteBtn = document.getElementById('delete-Btn');
-
   /* Controllo articoli collegati */
   supabase.from('articoli')
     .select('*')
@@ -178,6 +175,9 @@ function renderCategories(list) {
     });
 }
 
+updateDeleteButton(null);  
+
+  
   // Quando selezioni una riga aggiorni pulsante
 li.onclick = () => {
   if(editingInput) {
