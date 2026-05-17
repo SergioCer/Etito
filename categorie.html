@@ -68,6 +68,7 @@
   let selectedLi = null;
   let selectedId = null;
   let editingInput = null; // nuovo: tiene traccia se stiamo modificando
+  
   // Pulsante delete
   const deleteBtn = document.getElementById('delete-Btn');  
 
@@ -192,7 +193,7 @@ li.onclick = () => {
   }
 };
 
-// Click sul pulsante header
+// Click sul pulsante Cancella
 deleteBtn.onclick = async () => {
   if (!selectedId) return;
   const cat = categories.find(c => c.id_categoria === selectedId);
