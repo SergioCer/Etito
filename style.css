@@ -326,10 +326,4 @@ ul#categoryList li button {
         display: inline-block;
     }
 
-    ul#categoryList li button.delete-btn {
-        padding: 1px 4px
-        flex-basis: auto;
-        width: 20px;
-        margin: 2px 0 0 auto; /* allinea a destra */
-    }
 }
