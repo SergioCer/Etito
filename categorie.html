@@ -171,25 +171,60 @@ function renderCategories(list) {
     editField(note, cat, 'cat_note');
     };
     li.appendChild(note);
-
-    // Pulsante Cancella
-    const delBtn = document.createElement('button');
-    delBtn.className = 'delete-btn';
-    delBtn.textContent = '❌';
-    delBtn.onclick = e => { 
-      e.stopPropagation(); 
-        // ---- CONTROLLO 1: tipo e valore dell'ID ----
-      console.log("ID selezionato per cancellazione:", cat.id_categoria);
-      console.log("Tipo ID:", typeof cat.id_categoria);
-      console.log("Clic su cancella categoria ID:", cat.id_categoria); /* visualizza in consoll la categoria da cancellare */
-      
-      deleteCategory(cat); 
-    };
-    li.appendChild(delBtn);
-
+   
     ul.appendChild(li);
   });
 
+    const deleteBtn = document.getElementById('deleteCategoryBtn');
+
+  function updateDeleteButton(cat) {
+  if (!cat) {
+    deleteBtn.textContent = 'Cancella';
+    deleteBtn.classList.add('disabled');
+    deleteBtn.disabled = true;
+    return;
+  }
+
+  // Controllo articoli collegati
+  supabase.from('articoli')
+    .select('*')
+    .eq('id_categoria', cat.id_categoria)
+    .then(({ data }) => {
+      if (data.length > 0) {
+        deleteBtn.textContent = 'NON Cancellabile';
+        deleteBtn.classList.add('disabled');
+        deleteBtn.disabled = true;
+      } else {
+        deleteBtn.textContent = 'Cancella';
+        deleteBtn.classList.remove('disabled');
+        deleteBtn.disabled = false;
+      }
+    });
+}
+
+  // Quando selezioni una riga aggiorni pulsante
+li.onclick = () => {
+  if(editingInput) {
+    editingInput.blur();
+    setTimeout(() => {
+      selectRow();
+      updateDeleteButton(cat);
+    }, 0);
+  } else {
+    selectRow();
+    updateDeleteButton(cat);
+  }
+};
+
+// Click sul pulsante header
+deleteBtn.onclick = async () => {
+  if (!selectedId) return;
+  const cat = categories.find(c => c.id_categoria === selectedId);
+  if (!cat) return;
+  deleteCategory(cat);
+};
+  
+  
 // Riga per nuova categoria
 const newLi = document.createElement('li');
 newLi.className = 'new-category';
