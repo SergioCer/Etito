@@ -376,6 +376,9 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   // Controllo iniziale appena carica la pagina
   toggleClear();
 
+  // Metti focus automatico sul campo di ricerca
+  input.focus();
+  
   // Ogni volta che digiti nel campo
   input.addEventListener('input', () => {
     toggleClear();
