@@ -5,6 +5,7 @@
 <title>Categorie</title>
 <link rel="stylesheet" href="style.css">
 <style>
+
   #searchCategory {
     width: 300px;
     padding: 5px 8px;
@@ -12,157 +13,148 @@
     border: 1px solid #ccc;
   }
 
-  /* Lista categorie */
-  #categoryList {
-    margin-top: 20px; /* altezza stimata topBar + eventuali gap */
-  }
+  /* Header lista categorie */
 
-  #categoryHeader {
-    display: flex;
-    align-items: center;
-    padding: 2px 6px;
-    font-weight: bold;
-    background-color: #eee;
-    position: sticky;
-    top: 88px; /* altezza stimata topbar + ricerca */
-    z-index: 998;
-  }
+#categoryList {
+  margin-top: 20px; /* altezza stimata topBar + eventuali gap */
+}
+  
+#categoryHeader {
+  display: flex;
+  align-items: center;
+  padding: 2px 6px;
+  font-weight: bold;
+  background-color: #eee;
+  position: sticky;
+  top: 88px;
+  z-index: 998;
+}
 
-  #categoryHeader span.desc {
-    flex: 1 1 auto;
-    text-align: left;
-    border-right: 1px solid #ccc;
-    padding-right: 5px;
-  }
+#categoryHeader span.desc {
+  flex: 1 1 auto;
+  text-align: left;
+  border-right: 1px solid #ccc; /* linea prima di Descrizione */
+  padding-right: 5px;           /* spazio dal bordo */
+}
 
-  #categoryHeader span.note {
-    flex: 2 1 auto;
-    text-align: left;
-    border-right: 1px solid #ccc;
-    padding-right: 5px;
-  }
+#categoryHeader span.note {
+  flex: 2 1 auto;
+  text-align: left;
+  /* margin: 0 5px; Temporaneamente disabilitato ridotto */
+  border-right: 1px solid #ccc; /* linea prima di Note */
+  padding-right: 5px;           /* spazio dal bordo */
+}
 
-  #categoryHeader button#deleteCategoryBtn {
-    flex: 0 0 auto;
-    padding: 3px 8px;
-    font-size: 0.9em;
-    border-radius: 4px;
-    cursor: pointer;
-  }
+#categoryHeader span.del {
+  flex: 0 0 30px; /* larghezza fissa */
+  text-align: center;
+}
 
-  #categoryHeader button#deleteCategoryBtn.disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: not-allowed;
-  }
+#categoryHeader button#deleteCategoryBtn {
+  flex: 0 0 auto; /* larghezza automatica */
+  padding: 3px 8px;
+  font-size: 0.9em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#categoryHeader button#deleteCategoryBtn.disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}  
+  
 </style>
 </head>
 <body>
 <section id="fixedHeader">
-  <div id="topBar">
-    <a href="index.html">← Home</a>
-    <h2>Categorie</h2>
-  </div>
+  
+<div id="topBar">
+  <a href="index.html">← Home</a>
+  <h2>Categorie</h2>
+</div>
 
-  <div class="searchWrapper">
-    <input type="text" class="search" placeholder="Cerca categoria...">
-    <span class="clear">✖</span>
-  </div>
-
-  <div id="categoryHeader">
-    <span class="desc">Descrizione</span>
-    <span class="note">Note</span>
-    <button id="deleteCategoryBtn" class="disabled" disabled>Cancella</button>
-  </div>
+<div class="searchWrapper">
+  <input type="text" class="search" placeholder="Cerca categoria...">
+  <span class="clear">✖</span>
+</div>
+  
+<div id="categoryHeader">
+  <span class="desc">Descrizione</span>
+  <span class="note">Note</span>
+  <button id="deleteCategoryBtn">Cancella</button>
+</div>
 </section>
-
+  
 <ul id="categoryList"></ul>
 
 <script type="module">
-import { supabase } from './supabase.js';
-
-let categories = [];
-let selectedLi = null;
-let selectedId = null;
-let editingInput = null;
-
-// Carica tutte le categorie
-async function loadCategories() {
-  const { data, error } = await supabase
-    .from('categorie')
-    .select('*')
-    .order('id_categoria', { ascending:true });
-  if(error) return alert("Errore caricamento categorie: "+error.message);
-  categories = data || [];
-  renderCategories(categories);
-}
+  import { supabase } from './supabase.js';
+  let categories = [];
+  let selectedLi = null;
+  let selectedId = null;
+  let editingInput = null; // nuovo: tiene traccia se stiamo modificando
+  
+  // Carica tutte le categorie
+  async function loadCategories() {
+    const { data, error } = await supabase
+      .from('categorie')
+      .select('*')
+      .order('id_categoria', { ascending:true });
+    if(error) return alert("Errore caricamento categorie: "+error.message);
+    categories = data || [];
+    renderCategories(categories);
+  }
 
 // Rendering lista
 function renderCategories(list) {
   const ul = document.getElementById('categoryList');
   ul.innerHTML = '';
 
-  const deleteBtn = document.getElementById('deleteCategoryBtn');
-
-  // Funzione per aggiornare il pulsante header
-  function updateDeleteButton(cat) {
-    if (!cat) {
-      deleteBtn.textContent = 'Cancella';
-      deleteBtn.classList.add('disabled');
-      deleteBtn.disabled = true;
-      return;
-    }
-
-    supabase.from('articoli')
-      .select('*')
-      .eq('id_categoria', cat.id_categoria)
-      .then(({ data }) => {
-        if (data.length > 0) {
-          deleteBtn.textContent = 'NON Cancellabile';
-          deleteBtn.classList.add('disabled');
-          deleteBtn.disabled = true;
-        } else {
-          deleteBtn.textContent = 'Cancella';
-          deleteBtn.classList.remove('disabled');
-          deleteBtn.disabled = false;
-        }
-      });
-  }
-
-  // Creazione righe
   list.forEach(cat => {
     const li = document.createElement('li');
 
+    // Funzione di selezione riga
     const selectRow = () => {
-      if(selectedLi) selectedLi.classList.remove('selected');
-      selectedLi = li;
-      selectedId = cat.id_categoria;
-      li.classList.add('selected');
-      updateDeleteButton(cat);
+    if(selectedLi) selectedLi.classList.remove('selected');
+    selectedLi = li;
+    selectedId = cat.id_categoria; // ricordiamo quale riga è selezionata
+    li.classList.add('selected');
     };
 
-    // Click su riga
+    // Se la riga era già selezionata prima del reload
+    if(cat.id_categoria === selectedId) {
+    selectRow(); // richiama la funzione invece di duplicare codice
+    }    
+    
+    // Selezione riga anche se clicco su li stesso
     li.onclick = () => {
-      if(editingInput) {
-        editingInput.blur();
-        setTimeout(selectRow, 0);
-      } else {
-        selectRow();
-      }
+    if(editingInput) {
+    // stiamo modificando: prima chiudi modifica
+    editingInput.blur(); 
+    // ritarda leggermente la selezione per assicurarsi che input.onblur finisca
+    setTimeout(() => selectRow(), 0);
+    } else {
+    selectRow();
+    }
     };
 
     // Descrizione
     const desc = document.createElement('span');
     desc.className = 'desc';
     desc.textContent = cat.cat_descrizione;
+    
     desc.onclick = e => {
-      e.stopPropagation();
-      if(selectedLi !== li) {
-        selectRow();
-        return;
-      }
-      editField(desc, cat, 'cat_descrizione');
+    e.stopPropagation();
+    if(selectedLi !== li) {
+    // La riga non era selezionata → seleziona e termina
+    selectRow();
+    return;
+    }
+    // La riga era già selezionata → modifica
+    editField(desc, cat, 'cat_descrizione');
     };
+    
     desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
     li.appendChild(desc);
 
@@ -171,62 +163,128 @@ function renderCategories(list) {
     note.className = 'note';
     note.textContent = cat.cat_note || '';
     note.onclick = e => {
-      e.stopPropagation();
-      if(selectedLi !== li) {
-        selectRow();
-        return;
-      }
-      editField(note, cat, 'cat_note');
+    e.stopPropagation();
+    if(selectedLi !== li) {
+    selectRow();
+    return;
+    }
+    editField(note, cat, 'cat_note');
     };
     li.appendChild(note);
-
+   
     ul.appendChild(li);
   });
 
-  // Riga nuova categoria
-  const newLi = document.createElement('li');
-  newLi.className = 'new-category';
-  const descInput = document.createElement('input');
-  descInput.type = 'text';
-  descInput.placeholder = 'Nuova categoria...';
-  descInput.style.flex = '1';
-  newLi.appendChild(descInput);
+    const deleteBtn = document.getElementById('deleteCategoryBtn');
 
-  const noteInput = document.createElement('input');
-  noteInput.type = 'text';
-  noteInput.placeholder = 'Note (facoltativo)';
-  noteInput.style.flex = '2';
-  newLi.appendChild(noteInput);
+  function updateDeleteButton(cat) {
+  if (!cat) {
+    deleteBtn.textContent = 'Cancella';
+    deleteBtn.classList.add('disabled');
+    deleteBtn.disabled = true;
+    return;
+  }
 
-  ul.appendChild(newLi);
-
-  // Salvataggio nuova categoria
-  let skipBlur = false;
-  const handleNewCategory = async () => {
-    const descr = descInput.value.trim();
-    const note = noteInput.value.trim();
-    if (!descr) return;
-    skipBlur = true;
-    try { await addCategory(descr, note); }
-    finally { descInput.value=''; noteInput.value=''; skipBlur=false; }
-  };
-  descInput.addEventListener('keydown', e=>{if(e.key==='Enter') handleNewCategory();});
-  noteInput.addEventListener('keydown', e=>{if(e.key==='Enter') handleNewCategory();});
-  descInput.addEventListener('blur', async ()=>{if(!skipBlur) await handleNewCategory();});
-  noteInput.addEventListener('blur', async ()=>{if(!skipBlur) await handleNewCategory();});
-
-  // Pulsante header
-  deleteBtn.onclick = async () => {
-    if (!selectedId) return;
-    const cat = categories.find(c => c.id_categoria === selectedId);
-    if (!cat) return;
-    deleteCategory(cat);
-  };
+  // Controllo articoli collegati
+  supabase.from('articoli')
+    .select('*')
+    .eq('id_categoria', cat.id_categoria)
+    .then(({ data }) => {
+      if (data.length > 0) {
+        deleteBtn.textContent = 'NON Cancellabile';
+        deleteBtn.classList.add('disabled');
+        deleteBtn.disabled = true;
+      } else {
+        deleteBtn.textContent = 'Cancella';
+        deleteBtn.classList.remove('disabled');
+        deleteBtn.disabled = false;
+      }
+    });
 }
 
-// Modifica campo
+  // Quando selezioni una riga aggiorni pulsante
+li.onclick = () => {
+  if(editingInput) {
+    editingInput.blur();
+    setTimeout(() => {
+      selectRow();
+      updateDeleteButton(cat);
+    }, 0);
+  } else {
+    selectRow();
+    updateDeleteButton(cat);
+  }
+};
+
+// Click sul pulsante header
+deleteBtn.onclick = async () => {
+  if (!selectedId) return;
+  const cat = categories.find(c => c.id_categoria === selectedId);
+  if (!cat) return;
+  deleteCategory(cat);
+};
+  
+  
+// Riga per nuova categoria
+const newLi = document.createElement('li');
+newLi.className = 'new-category';
+
+const descInput = document.createElement('input');
+descInput.type = 'text';
+descInput.placeholder = 'Nuova categoria...';
+descInput.style.flex = '1';
+newLi.appendChild(descInput);
+
+const noteInput = document.createElement('input');
+noteInput.type = 'text';
+noteInput.placeholder = 'Note (facoltativo)';
+noteInput.style.flex = '2';
+newLi.appendChild(noteInput);
+
+// Salvataggio al tasto Enter o cambio campo
+let skipBlur = false; // evita doppio inserimento
+
+// Funzione unica per aggiungere la categoria
+const handleNewCategory = async () => {
+  const descr = descInput.value.trim();
+  const note = noteInput.value.trim();
+  if (!descr) return;
+
+  // Blocca blur finché finiamo
+  skipBlur = true;
+
+  try {
+    await addCategory(descr, note); // qui avviene il controllo duplicati e inserimento
+  } finally {
+    // Pulizia input e sblocco flag
+    descInput.value = '';
+    noteInput.value = '';
+    skipBlur = false;
+  }
+};
+
+// KEYDOWN Enter
+descInput.addEventListener('keydown', async e => {
+  if(e.key === 'Enter') await handleNewCategory();
+});
+noteInput.addEventListener('keydown', async e => {
+  if(e.key === 'Enter') await handleNewCategory();
+});
+
+// BLUR
+descInput.addEventListener('blur', async () => {
+  if(!skipBlur) await handleNewCategory();
+});
+noteInput.addEventListener('blur', async () => {
+  if(!skipBlur) await handleNewCategory();
+});
+
+ul.appendChild(newLi);
+  }
+
+  // Modifica campo
 async function editField(span, cat, field) {
-  if(editingInput) return;
+  if(editingInput) return; // evita di aprire più input contemporaneamente
   editingInput = span;
 
   const input = document.createElement('input');
@@ -251,26 +309,113 @@ async function editField(span, cat, field) {
 
   input.onkeydown = async e => {
     if(e.key==='Enter') await finishEdit();
-    if(e.key==='Escape') { input.replaceWith(span); editingInput=null; }
+    if(e.key==='Escape') {
+      input.replaceWith(span);
+      editingInput = null;
+    }
   };
+
   input.onblur = async () => await finishEdit();
 }
 
-// Eliminazione categoria
-async function deleteCategory(cat) {
+  // Eliminazione categoria
+  async function deleteCategory(cat) {
   try {
+    // Controlla articoli collegati
     const { data: articoli, error: err1 } = await supabase
-      .from('articoli').select('*').eq('id_categoria', cat.id_categoria);
+      .from('articoli')
+      .select('*')
+      .eq('id_categoria', cat.id_categoria);
     if(err1) throw err1;
-    if(articoli.length>0){ alert("Impossibile eliminare: esistono articoli in questa categoria."); return; }
+    if(articoli.length > 0){ 
+      alert("Impossibile eliminare: esistono articoli in questa categoria."); 
+      return; 
+    }
 
+    // Conferma utente
     if(!confirm(`Eliminare categoria "${cat.cat_descrizione}"?`)) return;
 
+    // Cancellazione
     const { error } = await supabase.from('categorie')
-      .delete().eq('id_categoria', cat.id_categoria);
+      .delete()
+      .eq('id_categoria', cat.id_categoria);
     if(error) throw error;
 
-    if(selectedId === cat.id_categoria){ selectedLi=null; selectedId=null; }
+    // Resetta selezione
+    if(selectedId === cat.id_categoria) {
+      selectedLi = null;
+      selectedId = null;
+    }
 
+    // Ricarica lista
     await loadCategories();
-  } catch(e) { alert("Errore cancellazione: "+
+  } catch(e) {
+    alert("Errore cancellazione: " + e.message);
+  }
+}
+
+async function addCategory(name, note = '') {
+  name = name.trim();
+  if (!name) return;
+
+  try {
+    // Controllo direttamente sul DB (case-insensitive)
+    const { data: existing, error: checkError } = await supabase
+      .from('categorie')
+      .select('id_categoria')
+      .ilike('cat_descrizione', name); // ricerca case-insensitive
+
+    if (checkError) throw checkError;
+
+    if (existing && existing.length > 0) {
+      alert(`La categoria "${name}" esiste già!`);
+      return;
+    }
+
+    // Inserimento
+    const { error: insertError } = await supabase
+      .from('categorie')
+      .insert({ cat_descrizione: name, cat_note: note });
+
+    if (insertError) throw insertError;
+
+    // Aggiorna lista categorie
+    await loadCategories();
+
+  } catch (err) {
+    alert("Errore aggiunta categoria: " + err.message);
+  }
+}
+
+// Seleziona tutti i campi di ricerca generici
+document.querySelectorAll('.searchWrapper').forEach(wrapper => {
+  const input = wrapper.querySelector('input.search');
+  const clearBtn = wrapper.querySelector('.clear');
+
+  // Mostra/nascondi X e filtra
+  input.addEventListener('input', () => {
+    const filter = input.value.toLowerCase();
+    
+    // esempio per categorie (puoi modificare per altri elenchi)
+    const filtered = categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter));
+    renderCategories(filtered);
+
+    // Mostra X solo se ci sono almeno 2 lettere
+    clearBtn.style.display = (input.value.length >= 2) ? 'block' : 'none';
+  });
+
+  // Click sulla X cancella input e aggiorna lista
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    renderCategories(categories); // mostra tutti
+    clearBtn.style.display = 'none';
+    input.focus();
+  });
+});
+  
+  
+  loadCategories();
+</script>
+
+</body>
+</html>
