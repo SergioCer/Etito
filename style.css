@@ -143,6 +143,12 @@ button:hover {
     background-color: #FF2929;
 }
 
+.delete-btn.disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
 /* ------------------------ TABELLE ------------------------ */
 table { 
     border-collapse: collapse; 
