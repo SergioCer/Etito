@@ -68,9 +68,9 @@
   let selectedLi = null;
   let selectedId = null;
   let editingInput = null; // nuovo: tiene traccia se stiamo modificando
+  updateDeleteButton(null); // Disabilita il pulsante finché non selezioni nulla */
 
- updateDeleteButton(null); // Disabilita il pulsante finché non selezioni nulla */
-  
+ 
   // Carica tutte le categorie
   async function loadCategories() {
     const { data, error } = await supabase
