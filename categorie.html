@@ -64,14 +64,13 @@
 
 <script type="module">
   import { supabase } from './supabase.js';
+  // Pulsante delete
+  const deleteBtn = document.getElementById('delete-Btn');  
   let categories = [];
   let selectedLi = null;
   let selectedId = null;
   let editingInput = null; // nuovo: tiene traccia se stiamo modificando
   
-  // Pulsante delete
-  const deleteBtn = document.getElementById('delete-Btn');  
-
   // Carica tutte le categorie
   async function loadCategories() {
     const { data, error } = await supabase
