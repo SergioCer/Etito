@@ -224,7 +224,7 @@ ul#categoryList li button {
 /* ------------------------ X SU CAMPO DI RICERCA ------------------------ */
 /* Wrapper generico per input di ricerca con X */
 .searchWrapper {
-  position: relative;
+  position: sticky;
   display: inline-block;
   width: 100%; /* si adatta al contenitore */
 }
