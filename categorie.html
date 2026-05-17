@@ -68,6 +68,8 @@
   let selectedLi = null;
   let selectedId = null;
   let editingInput = null; // nuovo: tiene traccia se stiamo modificando
+
+  updateDeleteButton(null); // Disabilita il pulsante finché non selezioni nulla
   
   // Carica tutte le categorie
   async function loadCategories() {
@@ -148,8 +150,6 @@ function renderCategories(list) {
     ul.appendChild(li);
   });
 
-    const deleteBtn = document.getElementById('delete-Btn');
-
   function updateDeleteButton(cat) {
   if (!cat) {
     deleteBtn.textContent = 'Cancella';
@@ -157,6 +157,8 @@ function renderCategories(list) {
     deleteBtn.disabled = true;
     return;
   }
+
+    const deleteBtn = document.getElementById('delete-Btn');
 
   // Controllo articoli collegati
   supabase.from('articoli')
