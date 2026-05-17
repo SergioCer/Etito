@@ -159,7 +159,10 @@ function renderCategories(list) {
   }
 
     const deleteBtn = document.getElementById('delete-Btn');
+    deleteBtn.disabled = true;
+    deleteBtn.classList.add('disabled');
 
+    
   // Controllo articoli collegati
   supabase.from('articoli')
     .select('*')
