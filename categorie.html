@@ -49,6 +49,20 @@
   flex: 0 0 30px; /* larghezza fissa */
   text-align: center;
 }
+
+#categoryHeader button#deleteCategoryBtn {
+  flex: 0 0 auto; /* larghezza automatica */
+  padding: 3px 8px;
+  font-size: 0.9em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#categoryHeader button#deleteCategoryBtn.disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}  
   
 </style>
 </head>
@@ -68,7 +82,7 @@
 <div id="categoryHeader">
   <span class="desc">Descrizione</span>
   <span class="note">Note</span>
-  <span class="del">Cancella</span>
+  <button id="deleteCategoryBtn">Cancella</button>
 </div>
 </section>
   
