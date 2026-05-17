@@ -70,7 +70,7 @@ a:hover {
     z-index: 1000;
   }
 
-#topBar link {
+#topBar a {
   position: absolute;
   left: 20px;
   top: 50%;
