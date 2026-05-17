@@ -261,7 +261,7 @@ ul#categoryList li button {
 @media (max-width: 600px) {
     body { 
         margin: 10px; 
-        font-size: 0.95em; /* leggermente più grande del default per leggibilità */
+        font-size: 1.5em; /* leggermente più grande del default per leggibilità */
     }
 
     section { 
@@ -269,11 +269,11 @@ ul#categoryList li button {
     }
 
     h1 { 
-        font-size: 2em; /* più leggibile */
+        font-size: 3em; /* più leggibile */
     }
 
     h2 { 
-        font-size: 1.6em; 
+        font-size: 2em; 
     }
 
     #searchCategory { 
