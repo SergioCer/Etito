@@ -38,7 +38,7 @@
   padding-right: 5px;           /* spazio dal bordo */
 }
 
-#categoryHeader button#deleteCategoryBtn {
+#categoryHeader button#delete-Btn {
   flex: 0 0 auto; /* larghezza automatica */
   padding: 3px 8px;
   font-size: 0.9em;
@@ -46,7 +46,7 @@
   cursor: pointer;
 }
 
-#categoryHeader button#deleteCategoryBtn.disabled {
+#categoryHeader button#delete-Btn.disabled {
   background-color: #ccc;
   color: #666;
   cursor: not-allowed;
@@ -70,7 +70,7 @@
 <div id="categoryHeader">
   <span class="desc">Descrizione</span>
   <span class="note">Note</span>
-  <button id="deleteCategoryBtn">Cancella</button>
+  <button id="delete-Btn">Cancella</button>
 </div>
 </section>
   
@@ -163,7 +163,7 @@ function renderCategories(list) {
     ul.appendChild(li);
   });
 
-    const deleteBtn = document.getElementById('deleteCategoryBtn');
+    const deleteBtn = document.getElementById('delete-Btn');
 
   function updateDeleteButton(cat) {
   if (!cat) {
