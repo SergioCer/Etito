@@ -96,6 +96,7 @@ function renderCategories(list) {
     selectedLi = li;
     selectedId = cat.id_categoria; // ricordiamo quale riga è selezionata
     li.classList.add('selected');
+    await updateDeleteButton(cat); // direttamente qui  
     };
 
     // Se la riga era già selezionata prima del reload
@@ -186,11 +187,9 @@ li.onclick = () => {
     editingInput.blur();
     setTimeout(() => {
       selectRow();
-      updateDeleteButton(cat);
     }, 0);
   } else {
     selectRow();
-    updateDeleteButton(cat);
   }
 };
 
