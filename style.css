@@ -1,7 +1,7 @@
 /* ------------------------ BASE ------------------------ */
 body { 
     font-family: 'Segoe UI', sans-serif; 
-    margin: 20px; 
+    margin: 10px; 
     max-width: 900px; 
     background: #f4f4f9; 
     color: #333;
@@ -15,7 +15,7 @@ h1 {
 
 h2 {
     font-size: 1.4em;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 /* ------------------------ SEZIONI ------------------------ */
