@@ -5,6 +5,7 @@ body {
     max-width: 900px; 
     background: #f4f4f9; 
     color: #333;
+    padding-top: 60px; /* altezza della topBar + eventuali margini */
 }
 
 h1 { 
