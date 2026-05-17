@@ -368,7 +368,7 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   const input = wrapper.querySelector('input.search');
   const clearBtn = wrapper.querySelector('.clear');
 
-  // Funzione per mostrare/nascondere X
+  // Funzione per aggiornare la visibilità della X
   function toggleClear() {
     clearBtn.style.display = (input.value.length >= 2) ? 'block' : 'none';
   }
@@ -376,21 +376,14 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   // Controllo iniziale appena carica la pagina
   toggleClear();
 
-  // Aggiorna X quando l'utente digita
+  // Ogni volta che digiti nel campo
   input.addEventListener('input', () => {
-    const filter = input.value.toLowerCase();
-    
-    // esempio per categorie (puoi modificare per altri elenchi)
-    const filtered = categories.filter(c => c.cat_descrizione.toLowerCase().includes(filter));
-    renderCategories(filtered);
-
     toggleClear();
   });
 
-  // Click sulla X cancella input e aggiorna lista
+  // Click sulla X per svuotare l'input
   clearBtn.addEventListener('click', () => {
     input.value = '';
-    renderCategories(categories); // mostra tutti
     toggleClear();
     input.focus();
   });
