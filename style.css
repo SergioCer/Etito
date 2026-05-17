@@ -262,7 +262,7 @@ ul#categoryList li button {
   font-weight: bold;
   font-size: 1em;
   color: #888;
-  display: none; /* nascosta di default */
+  /* display: none; nascosta di default */
 }
 
 .searchWrapper .clear:hover {
