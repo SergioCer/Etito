@@ -110,10 +110,8 @@ function renderCategories(list) {
     editingInput.blur(); 
     // ritarda leggermente la selezione per assicurarsi che input.onblur finisca
     setTimeout(() => selectRow(), 0);
-    updateDeleteButton(cat); // Aggiorna lo stato del pulsante Cancella 
     } else {
     selectRow();
-    updateDeleteButton(cat); // Aggiorna lo stato del pulsante Cancella 
     }
     };
 
@@ -169,10 +167,12 @@ function renderCategories(list) {
         deleteBtn.textContent = 'NON Cancellabile';
         deleteBtn.classList.add('disabled');
         deleteBtn.disabled = true;
+        updateDeleteButton(cat); // Aggiorna lo stato del pulsante Cancella 
       } else {
         deleteBtn.textContent = 'Cancella';
         deleteBtn.classList.remove('disabled');
         deleteBtn.disabled = false;
+        updateDeleteButton(cat); // Aggiorna lo stato del pulsante Cancella 
       }
     });
 }
