@@ -96,7 +96,6 @@ function renderCategories(list) {
     selectedLi = li;
     selectedId = cat.id_categoria; // ricordiamo quale riga è selezionata
     li.classList.add('selected');
-    updateDeleteButton(cat); // Aggiorna lo stato del pulsante Cancella 
     };
 
     // Se la riga era già selezionata prima del reload
@@ -111,8 +110,10 @@ function renderCategories(list) {
     editingInput.blur(); 
     // ritarda leggermente la selezione per assicurarsi che input.onblur finisca
     setTimeout(() => selectRow(), 0);
+    updateDeleteButton(cat); // Aggiorna lo stato del pulsante Cancella 
     } else {
     selectRow();
+    updateDeleteButton(cat); // Aggiorna lo stato del pulsante Cancella 
     }
     };
 
