@@ -50,9 +50,16 @@ a:hover {
 }
 
 /* ---------- menu ---------- */
-  /* Barra fissa in alto */
+#fixedHeader {
+  position: sticky;
+  top: 0; /* distanza dalla finestra */
+  z-index: 1000;
+  background-color: #f4f4f9; /* sfondo uniforme */
+  border-bottom: 2px solid #4CAF50;
+}
+/* Barra fissa in alto */
   #topBar {
-    position: sticky;
+    position: relative;
     top: 0;
     background: #f4f4f9;
     padding: 10px 20px;
@@ -79,7 +86,7 @@ a:hover {
 
   /* Ricerca fissa sotto barra */
   #searchWrapper {
-    position: sticky;
+    position: relative;
     top: 54px;
     display: block;  
     background: #f4f4f9;
