@@ -37,20 +37,6 @@
   border-right: 1px solid #ccc; /* linea prima di Note */
   padding-right: 5px;           /* spazio dal bordo */
 }
-
-#categoryHeader button#delete-Btn {
-  flex: 0 0 auto; /* larghezza automatica */
-  padding: 3px 8px;
-  font-size: 0.9em;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-#categoryHeader button#delete-Btn.disabled {
-  background-color: #ccc;
-  color: #666;
-  cursor: not-allowed;
-}  
   
 </style>
 </head>
@@ -70,7 +56,7 @@
 <div id="categoryHeader">
   <span class="desc">Descrizione</span>
   <span class="note">Note</span>
-  <button id="delete-Btn">Cancella</button>
+  <button id="delete-Btn" class="delete-btn">Cancella</button>
 </div>
 </section>
   
@@ -159,7 +145,6 @@ function renderCategories(list) {
     editField(note, cat, 'cat_note');
     };
     li.appendChild(note);
-   
     ul.appendChild(li);
   });
 
