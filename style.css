@@ -231,6 +231,7 @@ ul#categoryList li button {
   display: block;
   position: sticky;
   width: 100%; /* si adatta al contenitore */
+  z-index: 999;  
 }
 
 .searchWrapper input.search {
