@@ -1,7 +1,7 @@
 /* ------------------------ BASE ------------------------ */
 body { 
     font-family: 'Segoe UI', sans-serif; 
-    margin: 10px; 
+    margin: 5px; 
     max-width: 900px; 
     background: #f4f4f9; 
     color: #333;
@@ -9,7 +9,7 @@ body {
 
 h1 { 
     text-align: center; 
-    margin-bottom: 40px; 
+    margin-bottom: 20px; 
     font-size: 2em;
 }
 
