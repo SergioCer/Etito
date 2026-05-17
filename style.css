@@ -37,15 +37,15 @@ section:hover {
 #articlesSection { background-color: #f0fff4; border-left-color: #4CAF50; }
 #otherSection { background-color: #f0f4ff; border-left-color: #2196F3; }
 
-/* ------------------------ PAGINA ------------------------ */
-pagina {
+/* ------------------------ LINK ------------------------ */
+a {
     text-decoration: none;
     color: #4CAF50;
     font-weight: bold;
     transition: color 0.2s;
 }
 
-pagina:hover {
+a:hover {
     color: #45a049;
 }
 
