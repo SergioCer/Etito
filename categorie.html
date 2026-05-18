@@ -24,19 +24,19 @@
 }
 
 #categoryHeader span.desc {
-  flex: 0 0 50%; /* Larghezza massima - Larghezza minima - Larghezza iniziale */
+  flex: 0 0 60%; /* Larghezza massima - Larghezza minima - Larghezza iniziale */
   text-align: left;
   border-right: 1px solid #ccc; /* linea dopo Descrizione */
   padding-right: 5px;           /* spazio dal bordo */
 }
 
 #categoryHeader span.note {
-  flex: 0 0 35%; /* Larghezza massima - Larghezza minima - Larghezza iniziale */
+  flex: 0 0 30%; /* Quanto cresce - Quanto si restringe - Dimensione iniziale */
   text-align: left;
 }
   
 #categoryHeader span.delete-Btn {
-  flex: 0 0 15%; /* Larghezza massima - Larghezza minima - Larghezza iniziale */
+  flex: 0 0 10%; /* Quanto cresce - Quanto si restringe - Dimensione iniziale */
   text-align: center;
 }
   
@@ -364,6 +364,9 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   
 /* Ogni volta che digiti nel campo Ricerca */
   input.addEventListener('input', () => {
+
+    if (selectedLi) {selectedLi.classList.remove('selected');} /* cancella l'evidenziazione della riga */
+    
     toggleClear(); /* Mostra/Nascone la X */
     const filtro = input.value.trim().toLowerCase();
     const filtered = categories.filter(cat =>
