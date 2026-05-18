@@ -24,7 +24,6 @@ section {
     margin-bottom: 25px; 
     border-radius: 10px; 
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-left: 8px solid #4CAF50;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -75,7 +74,6 @@ a:hover {
   left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-weight: bold;
 }
 
   #topBar h2 {
@@ -165,21 +163,19 @@ ul#categoryList li span.note {
     padding-right: 5px;
     white-space: nowrap;         /* non andare a capo */
     overflow: hidden;            /* taglia il contenuto in eccesso */
+    min-height: 1em;       /* assicura altezza cliccabile */
     text-overflow: ellipsis;     /* mostra "..." alla fine */
+    display: inline-block; /* rende lo span rilevabile al click */
 }
 
 ul#categoryList li span.desc {
     flex: 0 0 60%;
     border-right: 1px solid #ccc;
-    min-height: 1em;
-    display: inline-block;
 }
 
 ul#categoryList li span.note {
     flex: 0 0 40%;
     margin: 0 10px;
-    min-height: 1em;       /* assicura altezza cliccabile */
-    display: inline-block; /* rende lo span rilevabile al click */
 }
 
 /* ------------------------ X SU CAMPO DI RICERCA ------------------------ */
@@ -195,7 +191,6 @@ ul#categoryList li span.note {
 .searchWrapper input.search {
   width: 100%;
   padding-right: 25px; /* spazio per la X */
-  box-sizing: border-box;
 }
 
 .searchWrapper .clear {
