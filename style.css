@@ -199,11 +199,10 @@ ul#categoryList li.selected {
 
 ul#categoryList li span.desc,
 ul#categoryList li span.note {
-    cursor: pointer;
-    user-select: none;
+    cursor: pointer; /* mostra che è cliccabile */
+    user-select: none; /* previene selezione accidentale del testo */
     flex-shrink: 0;
     min-width: 20px; /* garantisce area cliccabile anche se vuoto */
-    border-right: 1px solid #ccc;
     padding-right: 5px;
     white-space: nowrap;         /* non andare a capo */
     overflow: hidden;            /* taglia il contenuto in eccesso */
@@ -212,9 +211,7 @@ ul#categoryList li span.note {
 
 ul#categoryList li span.desc {
     flex: 1;
-    cursor: pointer;
-    user-select: none;
-    min-width: 20px;
+    border-right: 1px solid #ccc;
     min-height: 1em;
     display: inline-block;
 }
@@ -222,19 +219,8 @@ ul#categoryList li span.desc {
 ul#categoryList li span.note {
     flex: 2;
     margin: 0 10px;
-    cursor: pointer;       /* mostra che è cliccabile */
-    user-select: none;     /* previene selezione accidentale del testo */
-    min-width: 20px;       /* assicura larghezza minima anche se vuoto */
     min-height: 1em;       /* assicura altezza cliccabile */
     display: inline-block; /* rende lo span rilevabile al click */
-}
-
-ul#categoryList li button {
-    margin-left: 5px;
-    flex: 0 0 auto;   /* lascia l’altezza automatica */
-    padding: 2px 5px; /* padding piccolo */
-    height: 20px;     /* altezza fissa se vuoi */
-    font-size: 0.9em; /* adatta il font al nuovo pulsante */
 }
 
 /* ------------------------ X SU CAMPO DI RICERCA ------------------------ */
