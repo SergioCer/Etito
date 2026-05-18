@@ -33,9 +33,9 @@ section:hover {
     box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-#categoriesSection { background-color: #fff9f0; border-left-color: #FFA500; }
-#articlesSection { background-color: #f0fff4; border-left-color: #4CAF50; }
-#otherSection { background-color: #f0f4ff; border-left-color: #2196F3; }
+#ArticoliSection { background-color: #f0fff4; border-left-color: #4CAF50; }
+#CategorieSection { background-color: #fff9f0; border-left-color: #FFA500; }
+#UbicazioniSection { background-color: #f0f4ff; border-left-color: #2196F3; }
 
 /* ------------------------ LINK ------------------------ */
 a {
