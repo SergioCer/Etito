@@ -374,6 +374,7 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
     input.value = '';
     toggleClear();
     input.focus();
+    renderCategories(categories); /* Ricarica tutta la lista senza filtro */
   });
 });
   
