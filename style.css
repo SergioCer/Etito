@@ -1,3 +1,21 @@
+<!-- 
+  standard.css contiene le seguenti sezioni principali:
+
+  1. Corpo (body, h1, h2)
+  2. Sezioni (section, #ArticoliSection, #CategorieSection, #UbicazioniSection)
+  3. Link (a, a:hover)
+  4. Menu e barra fissa (#fixedHeader, #topBar)
+  5. Input / Button / Select (stili generali)
+  6. Pulsanti generali (button, button:hover)
+  7. Tabelle (table, td, th, tr:hover, tr:nth-child(even))
+  8. Liste (ul, ul#categoryList li, span.desc, span.note, li.selected)
+  9. Campo ricerca con X (.searchWrapper, input.search, .clear)
+ 10. Responsive (@media max-width: 600px)
+
+  Nota: regole di base comuni a tutte le pagine; eventuali stili specifici di pagina
+  vanno aggiunti inline con <style> o in file CSS dedicati.
+-->
+
 /* ------------------------ CORPO ------------------------ */
 body { 
     font-family: 'Segoe UI', sans-serif; 
