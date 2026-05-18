@@ -122,6 +122,7 @@ function renderCategories(list) {
     desc.onclick = e => {
     e.stopPropagation();
     if(selectedLi !== li) { // La riga non era selezionata → seleziona e termina
+    updateDeleteButton(cat);      
     selectRow();
     return;
     }  // La riga era già selezionata → modifica
@@ -138,6 +139,7 @@ function renderCategories(list) {
     note.onclick = e => {
     e.stopPropagation();
     if(selectedLi !== li) {
+    updateDeleteButton(cat);      
     selectRow();
     return;
     }
