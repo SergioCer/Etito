@@ -86,6 +86,8 @@
 
 /* Aggiorna la Lista */
 function renderCategories(list) {
+      if (selectedLi) {selectedLi.classList.remove('selected');} /* cancella l'evidenziazione della riga */
+
   const ul = document.getElementById('categoryList');
   ul.innerHTML = '';
   list.forEach(cat => {
@@ -364,9 +366,6 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   
 /* Ogni volta che digiti nel campo Ricerca */
   input.addEventListener('input', () => {
-
-    if (selectedLi) {selectedLi.classList.remove('selected');} /* cancella l'evidenziazione della riga */
-    
     toggleClear(); /* Mostra/Nascone la X */
     const filtro = input.value.trim().toLowerCase();
     const filtered = categories.filter(cat =>
