@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="style.css">
 <style>
 
-  /* Intestazione lista categorie */
+/* Intestazione lista categorie */
 
 #categoryList {
   margin-top: 20px; /* altezza stimata topBar + eventuali gap */
@@ -33,7 +33,7 @@
 #categoryHeader span.note {
   flex: 2 1 auto;
   text-align: left;
-  /* margin: 0 5px; Temporaneamente disabilitato ridotto */
+/* margin: 0 5px; Temporaneamente disabilitato ridotto */
 }
   
 </style>
@@ -62,14 +62,14 @@
 
 <script type="module">
   import { supabase } from './supabase.js';
-  // Pulsante delete
+/* Pulsante delete */
   const deleteBtn = document.getElementById('delete-Btn');  
   let categories = [];
   let selectedLi = null;
   let selectedId = null;
   let editingInput = null; // nuovo: tiene traccia se stiamo modificando
   
-  /* Carica tutte le categorie */
+/* Carica tutte le categorie */
   async function loadCategories() {
     const { data, error } = await supabase
       .from('categorie')
@@ -87,7 +87,7 @@ function renderCategories(list) {
   list.forEach(cat => {
     const li = document.createElement('li');
 
-    /* Selezione la riga */
+/* Selezione la riga */
     const selectRow = () => {
     if(selectedLi) selectedLi.classList.remove('selected');
     selectedLi = li;
@@ -95,17 +95,17 @@ function renderCategories(list) {
     li.classList.add('selected');
     };
 
-    /* Se la riga era già selezionata prima del reload */
+/* Se la riga era già selezionata prima del reload */
     if(cat.id_categoria === selectedId) {
     selectRow(); // richiama la funzione invece di duplicare codice
     }    
     
-    /* Selezione riga anche se clicco su fuori */
+/* Selezione riga anche se clicco su fuori */
     li.onclick = () => {
     if(editingInput) {
-    /* stiamo modificando: prima chiudi modifica */
+/* stiamo modificando: prima chiudi modifica */
     editingInput.blur(); 
-    /* ritarda leggermente la selezione per assicurarsi che input.onblur finisca */
+/* ritarda leggermente la selezione per assicurarsi che input.onblur finisca */
     setTimeout(() => selectRow(), 0);
     updateDeleteButton(cat);      
     } else {
@@ -114,7 +114,7 @@ function renderCategories(list) {
     }
     };
 
-    /* Descrizione */
+/* Descrizione */
     const desc = document.createElement('span');
     desc.className = 'desc';
     desc.textContent = cat.cat_descrizione;
@@ -131,7 +131,7 @@ function renderCategories(list) {
     desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
     li.appendChild(desc);
 
-    /* Note */
+/* Note */
     const note = document.createElement('span');
     note.className = 'note';
     note.textContent = cat.cat_note || '';
@@ -156,7 +156,7 @@ function renderCategories(list) {
     return;
   }
 
-  /* Controllo articoli collegati */
+/* Controllo articoli collegati */
   supabase.from('articoli')
     .select('*')
     .eq('id_categoria', cat.id_categoria)
@@ -209,13 +209,13 @@ const handleNewCategory = async () => {
   const note = noteInput.value.trim();
   if (!descr) return;
 
-  /* Blocca blur finché finiamo */
+/* Blocca blur finché finiamo */
   skipBlur = true;
 
   try {
     await addCategory(descr, note); /* qui avviene il controllo duplicati e inserimento */
   } finally {
-    // Pulizia input e sblocco flag
+/* Pulizia input e sblocco flag */
     descInput.value = '';
     noteInput.value = '';
     skipBlur = false;
@@ -241,7 +241,7 @@ noteInput.addEventListener('blur', async () => {
 ul.appendChild(newLi);
   }
 
-  /* Modifica campo */
+/* Modifica campo */
 async function editField(span, cat, field) {
   if(editingInput) return; // evita di aprire più input contemporaneamente
   editingInput = span;
@@ -277,7 +277,7 @@ async function editField(span, cat, field) {
   input.onblur = async () => await finishEdit();
 }
 
-  /* Eliminazione categoria */
+/* Eliminazione categoria */
   async function deleteCategory(cat) {
   try {
     /* Controlla articoli collegati */
@@ -291,34 +291,34 @@ async function editField(span, cat, field) {
       return; 
     }
 
-    /* Conferma Cancellazione */
+/* Conferma Cancellazione */
     if(!confirm(`Eliminare categoria "${cat.cat_descrizione}"?`)) return;
 
-    /* Cancellazione effettiva */
+/* Cancellazione effettiva */
     const { error } = await supabase.from('categorie')
       .delete()
       .eq('id_categoria', cat.id_categoria);
     if(error) throw error;
 
-    /* Resetta selezione */
+/* Resetta selezione */
     if(selectedId === cat.id_categoria) {
       selectedLi = null;
       selectedId = null;
     }
 
-    /* Ricarica lista */
+/* Ricarica lista */
     await loadCategories();
   } catch(e) {
     alert("Errore cancellazione: " + e.message);
   }
 }
 
- /* Aggiunge una nuova Categoria */
+/* Aggiunge una nuova Categoria */
 async function addCategory(name, note = '') {
   name = name.trim();
   if (!name) return;
 
-  /* Controllo direttamente sul DB (case-insensitive) */
+/* Controllo direttamente sul DB (case-insensitive) */
   try {
     const { data: existing, error: checkError } = await supabase
       .from('categorie')
@@ -334,7 +334,7 @@ async function addCategory(name, note = '') {
       .insert({ cat_descrizione: name, cat_note: note });
     if (insertError) throw insertError;
 
-    /* Aggiorna lista categorie */
+/* Aggiorna lista categorie */
     await loadCategories();
 
   } catch (err) {
@@ -347,23 +347,23 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   const input = wrapper.querySelector('input.search');
   const clearBtn = wrapper.querySelector('.clear');
 
-  /* Funzione per aggiornare la visibilità della X */
+/* Funzione per aggiornare la visibilità della X */
   function toggleClear() {
     clearBtn.style.display = (input.value.length >= 2) ? 'block' : 'none';
   }
 
-  /* Controllo iniziale appena carica la pagina */
+/* Controllo iniziale appena carica la pagina */
   toggleClear();
 
-  /* Metti focus automatico sul campo di ricerca */
+/* Metti focus automatico sul campo di ricerca */
   input.focus();
   
-  /* Ogni volta che digiti nel campo */
+/* Ogni volta che digiti nel campo Ricerca */
   input.addEventListener('input', () => {
-    toggleClear();
+    toggleClear(); /* Mostra/Nascone la X */
   });
 
-  /* Click sulla X per svuotare l'input */
+/* Click sulla X per svuotare l'input */
   clearBtn.addEventListener('click', () => {
     input.value = '';
     toggleClear();
