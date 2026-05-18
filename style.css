@@ -88,7 +88,6 @@ a:hover {
 input, select, button, textarea { 
     margin: 8px 0; 
     padding: 8px; 
-    width: 100%; 
     box-sizing: border-box; 
     border-radius: 5px; 
     border: 1px solid #ccc; 
@@ -166,7 +165,6 @@ ul#categoryList li span.desc,
 ul#categoryList li span.note {
     cursor: pointer; /* mostra che è cliccabile */
     user-select: none; /* previene selezione accidentale del testo */
-    flex-shrink: 0;
     min-width: 20px; /* garantisce area cliccabile anche se vuoto */
     padding-right: 5px;
     white-space: nowrap;         /* non andare a capo */
@@ -218,12 +216,6 @@ ul#categoryList li span.note {
 
 .searchWrapper .clear:hover {
   color: #444;
-}
-
-/* ------------------------ FILTRO / INPUT RICERCA ------------------------ */
-#searchCategory {
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
 
 /* ------------------------ RESPONSIVE ------------------------ */
