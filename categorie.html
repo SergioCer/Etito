@@ -314,29 +314,25 @@ async function editField(span, cat, field) {
   }
 }
 
+ /* Aggiunge una nuova Categoria */
 async function addCategory(name, note = '') {
   name = name.trim();
   if (!name) return;
 
+  /* Controllo direttamente sul DB (case-insensitive) */
   try {
-    // Controllo direttamente sul DB (case-insensitive)
     const { data: existing, error: checkError } = await supabase
       .from('categorie')
       .select('id_categoria')
-      .ilike('cat_descrizione', name); // ricerca case-insensitive
-
+      .ilike('cat_descrizione', name); /* Ricerca case-insensitive */
     if (checkError) throw checkError;
-
     if (existing && existing.length > 0) {
       alert(`La categoria "${name}" esiste già!`);
       return;
     }
-
-    // Inserimento
     const { error: insertError } = await supabase
       .from('categorie')
       .insert({ cat_descrizione: name, cat_note: note });
-
     if (insertError) throw insertError;
 
     // Aggiorna lista categorie
@@ -347,7 +343,7 @@ async function addCategory(name, note = '') {
   }
 }
 
-// Seleziona tutti i campi di ricerca generici
+/* Seleziona tutti i campi di ricerca generici */
 document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   const input = wrapper.querySelector('input.search');
   const clearBtn = wrapper.querySelector('.clear');
@@ -357,18 +353,18 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
     clearBtn.style.display = (input.value.length >= 2) ? 'block' : 'none';
   }
 
-  // Controllo iniziale appena carica la pagina
+  /* Controllo iniziale appena carica la pagina */
   toggleClear();
 
-  // Metti focus automatico sul campo di ricerca
+  /* Metti focus automatico sul campo di ricerca */
   input.focus();
   
-  // Ogni volta che digiti nel campo
+  /* Ogni volta che digiti nel campo */
   input.addEventListener('input', () => {
     toggleClear();
   });
 
-  // Click sulla X per svuotare l'input
+  /* Click sulla X per svuotare l'input */
   clearBtn.addEventListener('click', () => {
     input.value = '';
     toggleClear();
@@ -376,9 +372,7 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   });
 });
   
-  
   loadCategories();
 </script>
-
 </body>
 </html>
