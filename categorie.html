@@ -86,8 +86,6 @@
 
 /* Aggiorna la Lista */
 function renderCategories(list) {
-      if (selectedLi) {selectedLi.classList.remove('selected');} /* cancella l'evidenziazione della riga */
-
   const ul = document.getElementById('categoryList');
   ul.innerHTML = '';
   list.forEach(cat => {
