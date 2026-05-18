@@ -172,18 +172,6 @@ function renderCategories(list) {
     });
 }
 
-  // Quando selezioni una riga aggiorni pulsante
-li.onclick = () => {
-  if(editingInput) {
-    editingInput.blur();
-    setTimeout(() => {
-      selectRow();
-    }, 0);
-  } else {
-    selectRow();
-  }
-};
-
 // Click sul pulsante Cancella
 deleteBtn.onclick = async () => {
   if (!selectedId) return;
