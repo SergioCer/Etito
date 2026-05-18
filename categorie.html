@@ -349,7 +349,7 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
 
 /* Funzione per aggiornare la visibilità della X */
   function toggleClear() {
-    clearBtn.style.display = (input.value.length >= 2) ? 'block' : 'none';
+    clearBtn.style.display = (input.value.length >= 3) ? 'block' : 'none';
   }
 
 /* Controllo iniziale appena carica la pagina */
@@ -361,6 +361,12 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
 /* Ogni volta che digiti nel campo Ricerca */
   input.addEventListener('input', () => {
     toggleClear(); /* Mostra/Nascone la X */
+    const filtro = input.value.trim().toLowerCase();
+    const filtered = categories.filter(cat =>
+    (cat.cat_descrizione || '').toLowerCase().includes(filtro) ||
+    (cat.cat_note || '').toLowerCase().includes(filtro)
+    );
+    renderCategories(filtered);
   });
 
 /* Click sulla X per svuotare l'input */
