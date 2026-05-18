@@ -1,4 +1,4 @@
-/* ------------------------ BASE ------------------------ */
+/* ------------------------ CORPO ------------------------ */
 body { 
     font-family: 'Segoe UI', sans-serif; 
     margin: 5px; 
@@ -102,11 +102,7 @@ button {
     cursor: pointer; 
     font-weight: bold; 
     transition: background-color 0.2s;
-    padding: 8px;
     width: 100%;
-    box-sizing: border-box;
-    border-radius: 5px;
-    font-size: 1em;
 }
 
 button:hover { 
