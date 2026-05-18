@@ -125,30 +125,6 @@ button:hover {
     background-color: #45a049; 
 }
 
-/* Pulsanti piccoli a fianco di liste */
-.delete-btn {
-    padding: 2px 5px;
-    font-size: 0.8em;
-    border-radius: 4px;
-    margin-left: 10px;
-    height: 20px;       /* forza altezza */
-    width: auto; /* non full width */
-    background-color: #FF9C2A;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-.delete-btn:hover {
-    background-color: #FF2929;
-}
-
-.delete-btn.disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: not-allowed;
-}
-
 /* ------------------------ TABELLE ------------------------ */
 table { 
     border-collapse: collapse; 
@@ -210,14 +186,14 @@ ul#categoryList li span.note {
 }
 
 ul#categoryList li span.desc {
-    flex: 1;
+    flex: 0 0 60%;
     border-right: 1px solid #ccc;
     min-height: 1em;
     display: inline-block;
 }
 
 ul#categoryList li span.note {
-    flex: 2;
+    flex: 0 0 40%;
     margin: 0 10px;
     min-height: 1em;       /* assicura altezza cliccabile */
     display: inline-block; /* rende lo span rilevabile al click */
