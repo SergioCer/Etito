@@ -26,7 +26,7 @@
 #categoryHeader span.desc {
   flex: 1 1 auto;
   text-align: left;
-  border-right: 1px solid #ccc; /* linea prima di Descrizione */
+  border-right: 1px solid #ccc; /* linea dopo Descrizione */
   padding-right: 5px;           /* spazio dal bordo */
 }
 
@@ -34,8 +34,6 @@
   flex: 2 1 auto;
   text-align: left;
   /* margin: 0 5px; Temporaneamente disabilitato ridotto */
-  border-right: 1px solid #ccc; /* linea prima di Note */
-  padding-right: 5px;           /* spazio dal bordo */
 }
   
 </style>
@@ -110,10 +108,10 @@ function renderCategories(list) {
     editingInput.blur(); 
     // ritarda leggermente la selezione per assicurarsi che input.onblur finisca
     setTimeout(() => selectRow(), 0);
-    updateDeleteButton(categories.find(c => c.id_categoria === selectedId));      
+    updateDeleteButton(categories.find(cat));      
     } else {
     selectRow();
-    updateDeleteButton(categories.find(c => c.id_categoria === selectedId));
+    updateDeleteButton(categories.find(cat));
     }
     };
 
@@ -121,15 +119,12 @@ function renderCategories(list) {
     const desc = document.createElement('span');
     desc.className = 'desc';
     desc.textContent = cat.cat_descrizione;
-    
     desc.onclick = e => {
     e.stopPropagation();
-    if(selectedLi !== li) {
-    // La riga non era selezionata → seleziona e termina
+    if(selectedLi !== li) { // La riga non era selezionata → seleziona e termina
     selectRow();
     return;
-    }
-    // La riga era già selezionata → modifica
+    }  // La riga era già selezionata → modifica
     editField(desc, cat, 'cat_descrizione');
     };
     
