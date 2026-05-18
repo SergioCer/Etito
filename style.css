@@ -297,8 +297,7 @@ ul#categoryList li span.note {
     }
 
     #categoryHeader span.desc,
-    #categoryHeader span.note,
-    #categoryHeader span.del {
+    #categoryHeader span.note {
         flex-basis: 100%; /* vanno a capo su schermi piccoli */
         margin: 2px 0;
         text-align: left;
