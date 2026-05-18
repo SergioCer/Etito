@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="style.css">
 <style>
 
-  /* Header lista categorie */
+  /* Intestazione lista categorie */
 
 #categoryList {
   margin-top: 20px; /* altezza stimata topBar + eventuali gap */
@@ -69,7 +69,7 @@
   let selectedId = null;
   let editingInput = null; // nuovo: tiene traccia se stiamo modificando
   
-  // Carica tutte le categorie
+  /* Carica tutte le categorie */
   async function loadCategories() {
     const { data, error } = await supabase
       .from('categorie')
@@ -80,15 +80,14 @@
     renderCategories(categories);
   }
 
-// Rendering lista
+/* Aggiorna la Lista */
 function renderCategories(list) {
   const ul = document.getElementById('categoryList');
   ul.innerHTML = '';
-
   list.forEach(cat => {
     const li = document.createElement('li');
 
-    // Funzione di selezione riga
+    /* Selezione la riga */
     const selectRow = () => {
     if(selectedLi) selectedLi.classList.remove('selected');
     selectedLi = li;
@@ -96,17 +95,17 @@ function renderCategories(list) {
     li.classList.add('selected');
     };
 
-    // Se la riga era già selezionata prima del reload
+    /* Se la riga era già selezionata prima del reload */
     if(cat.id_categoria === selectedId) {
     selectRow(); // richiama la funzione invece di duplicare codice
     }    
     
-    // Selezione riga anche se clicco su li stesso
+    /* Selezione riga anche se clicco su fuori */
     li.onclick = () => {
     if(editingInput) {
-    // stiamo modificando: prima chiudi modifica
+    /* stiamo modificando: prima chiudi modifica */
     editingInput.blur(); 
-    // ritarda leggermente la selezione per assicurarsi che input.onblur finisca
+    /* ritarda leggermente la selezione per assicurarsi che input.onblur finisca */
     setTimeout(() => selectRow(), 0);
     updateDeleteButton(cat);      
     } else {
@@ -115,7 +114,7 @@ function renderCategories(list) {
     }
     };
 
-    // Descrizione
+    /* Descrizione */
     const desc = document.createElement('span');
     desc.className = 'desc';
     desc.textContent = cat.cat_descrizione;
@@ -125,14 +124,14 @@ function renderCategories(list) {
     updateDeleteButton(cat);      
     selectRow();
     return;
-    }  // La riga era già selezionata → modifica
+    }  /* La riga era già selezionata → modifica */
     editField(desc, cat, 'cat_descrizione');
     };
     
     desc.ondblclick = () => window.location.href=`articoli.html?categoria=${cat.id_categoria}`;
     li.appendChild(desc);
 
-    // Note
+    /* Note */
     const note = document.createElement('span');
     note.className = 'note';
     note.textContent = cat.cat_note || '';
@@ -176,7 +175,7 @@ function renderCategories(list) {
 
   updateDeleteButton(null);  // setta lo stato iniziale del pulsante cancella
   
-// Click sul pulsante Cancella
+/* Click sul pulsante Cancella */
 deleteBtn.onclick = async () => {
   if (!selectedId) return;
   const cat = categories.find(c => c.id_categoria === selectedId);
@@ -185,7 +184,7 @@ deleteBtn.onclick = async () => {
 };
   
   
-// Riga per nuova categoria
+/* Riga per nuova Categoria */
 const newLi = document.createElement('li');
 newLi.className = 'new-category';
 
@@ -201,20 +200,20 @@ noteInput.placeholder = 'Note (facoltativo)';
 noteInput.style.flex = '2';
 newLi.appendChild(noteInput);
 
-// Salvataggio al tasto Enter o cambio campo
+/* Salvataggio al tasto Enter o cambio campo */
 let skipBlur = false; // evita doppio inserimento
 
-// Funzione unica per aggiungere la categoria
+/* Funzione unica per aggiungere la categoria */
 const handleNewCategory = async () => {
   const descr = descInput.value.trim();
   const note = noteInput.value.trim();
   if (!descr) return;
 
-  // Blocca blur finché finiamo
+  /* Blocca blur finché finiamo */
   skipBlur = true;
 
   try {
-    await addCategory(descr, note); // qui avviene il controllo duplicati e inserimento
+    await addCategory(descr, note); /* qui avviene il controllo duplicati e inserimento */
   } finally {
     // Pulizia input e sblocco flag
     descInput.value = '';
@@ -223,7 +222,7 @@ const handleNewCategory = async () => {
   }
 };
 
-// KEYDOWN Enter
+/* KEYDOWN Enter */
 descInput.addEventListener('keydown', async e => {
   if(e.key === 'Enter') await handleNewCategory();
 });
@@ -231,7 +230,7 @@ noteInput.addEventListener('keydown', async e => {
   if(e.key === 'Enter') await handleNewCategory();
 });
 
-// BLUR
+/* BLUR */
 descInput.addEventListener('blur', async () => {
   if(!skipBlur) await handleNewCategory();
 });
@@ -242,7 +241,7 @@ noteInput.addEventListener('blur', async () => {
 ul.appendChild(newLi);
   }
 
-  // Modifica campo
+  /* Modifica campo */
 async function editField(span, cat, field) {
   if(editingInput) return; // evita di aprire più input contemporaneamente
   editingInput = span;
@@ -278,10 +277,10 @@ async function editField(span, cat, field) {
   input.onblur = async () => await finishEdit();
 }
 
-  // Eliminazione categoria
+  /* Eliminazione categoria */
   async function deleteCategory(cat) {
   try {
-    // Controlla articoli collegati
+    /* Controlla articoli collegati */
     const { data: articoli, error: err1 } = await supabase
       .from('articoli')
       .select('*')
@@ -292,22 +291,22 @@ async function editField(span, cat, field) {
       return; 
     }
 
-    // Conferma utente
+    /* Conferma Cancellazione */
     if(!confirm(`Eliminare categoria "${cat.cat_descrizione}"?`)) return;
 
-    // Cancellazione
+    /* Cancellazione effettiva */
     const { error } = await supabase.from('categorie')
       .delete()
       .eq('id_categoria', cat.id_categoria);
     if(error) throw error;
 
-    // Resetta selezione
+    /* Resetta selezione */
     if(selectedId === cat.id_categoria) {
       selectedLi = null;
       selectedId = null;
     }
 
-    // Ricarica lista
+    /* Ricarica lista */
     await loadCategories();
   } catch(e) {
     alert("Errore cancellazione: " + e.message);
@@ -335,7 +334,7 @@ async function addCategory(name, note = '') {
       .insert({ cat_descrizione: name, cat_note: note });
     if (insertError) throw insertError;
 
-    // Aggiorna lista categorie
+    /* Aggiorna lista categorie */
     await loadCategories();
 
   } catch (err) {
@@ -348,7 +347,7 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   const input = wrapper.querySelector('input.search');
   const clearBtn = wrapper.querySelector('.clear');
 
-  // Funzione per aggiornare la visibilità della X
+  /* Funzione per aggiornare la visibilità della X */
   function toggleClear() {
     clearBtn.style.display = (input.value.length >= 2) ? 'block' : 'none';
   }
