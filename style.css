@@ -79,7 +79,7 @@ a:hover {
   top: 0; /* distanza dalla finestra */
   z-index: 1000;
   background-color: #f4f4f9; /* sfondo uniforme */
-  border-bottom: 2px solid #4CAF50;
+  border: 2px solid #4CAF50;
 }
 /* Barra fissa in alto */
   #topBar {
@@ -87,7 +87,6 @@ a:hover {
     top: 0;
     background: #f4f4f9;
     padding: 20px;
-    border: 2px solid #4CAF50;
     display: flex;
     align-items: center;
     justify-content: center;
