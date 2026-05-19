@@ -86,8 +86,8 @@ a:hover {
     position: relative;
     top: 0;
     background: #f4f4f9;
-    padding: 10px 20px;
-    border-bottom: 2px solid #4CAF50;
+    padding: 20px;
+    border: 2px solid #4CAF50;
     display: flex;
     align-items: center;
     justify-content: center;
