@@ -78,7 +78,7 @@
     const { data, error } = await supabase
       .from('categorie')
       .select('*')
-      .order('id_categoria', { ascending:true });
+      .order('cat_descrizione', { ascending:true });
     if(error) return alert("Errore caricamento categorie: "+error.message);
     categories = data || [];
     renderCategories(categories);
