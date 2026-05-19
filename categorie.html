@@ -369,23 +369,25 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   input.focus();
   
 /* Ogni volta che digiti nel campo Ricerca */
-  input.addEventListener('input', () => {
-    toggleClear(); /* Mostra/Nascone la X */
+    /* Mostra/Nascone la X */
+    input.addEventListener('input', () => {
+    toggleClear(); 
     const filtro = input.value.trim().toLowerCase();
     /* Filtra le caterorie */
     const filtered = categories.filter(cat =>
     (cat.cat_descrizione || '').toLowerCase().includes(filtro) ||
     (cat.cat_note || '').toLowerCase().includes(filtro)
     );
-    // Rimuove evidenziazione riga selezionata
+    /* Rimuove evidenziazione riga selezionata */
     if (selectedLi) {
         selectedLi.classList.remove('selected');
         selectedLi = null;      // resettare variabile
         selectedId = null;      // resettare id selezionato
     }    
-    renderCategories(filtered);
-    // Aggiorna pulsante delete: disabilitato se non c'è selezione
+    /* Aggiorna pulsante delete: disabilitato se non c'è selezione */
     updateDeleteButton(null);    
+    /* Ricarica tutta la lista filtrata */
+    renderCategories(filtered);
   });
 
 /* Click sulla X per svuotare l'input */
@@ -393,7 +395,16 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
     input.value = '';
     toggleClear();
     input.focus();
-    renderCategories(categories); /* Ricarica tutta la lista senza filtro */
+    /* Rimuove evidenziazione riga selezionata */
+    if (selectedLi) {
+        selectedLi.classList.remove('selected');
+        selectedLi = null;      // resettare variabile
+        selectedId = null;      // resettare id selezionato
+    }    
+    /* Aggiorna pulsante delete: disabilitato se non c'è selezione */
+    updateDeleteButton(null);    
+    /* Ricarica tutta la lista senza filtro */
+    renderCategories(categories);
   });
 });
   
