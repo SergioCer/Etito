@@ -271,7 +271,12 @@ async function editField(span, cat, field) {
         .update({ [field]: newVal })
         .eq('id_categoria', cat.id_categoria);
       if(error) return alert("Errore modifica: "+error.message);
+
+      // Aggiorna il valore nell’oggetto locale
+      cat[field] = newVal;      
     }
+    // Aggiorna lo span visivamente
+    span.textContent = newVal;
     input.replaceWith(span);
     editingInput = null;
   };
