@@ -59,11 +59,18 @@ a {
     text-decoration: none;
     color: #4CAF50;
     font-weight: bold;
-    transition: color 0.2s;
+    padding: 6px 12px;               /* spazio interno */
+    border: 2px solid #4CAF50;       /* bordo verde */
+    border-radius: 6px;               /* angoli arrotondati */
+    background-color: transparent;    /* sfondo iniziale */
+    transition: all 0.3s ease;       /* transizione fluida */
 }
 
+/* Effetto hover */
 a:hover {
-    color: #45a049;
+    background-color: #4CAF50;       /* sfondo verde */
+    color: #fff;                      /* testo bianco */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* leggero effetto ombra */
 }
 
 /* ---------- MENU' ---------- */
