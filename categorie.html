@@ -381,8 +381,8 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
     /* Rimuove evidenziazione riga selezionata */
     if (selectedLi) {
         selectedLi.classList.remove('selected');
-        selectedLi = null;      // resettare variabile
-        selectedId = null;      // resettare id selezionato
+        selectedLi = null;
+        selectedId = null;
     }    
     /* Ricarica tutta la lista filtrata */
     renderCategories(filtered);
@@ -398,11 +398,11 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
     /* Rimuove evidenziazione riga selezionata */
     if (selectedLi) {
         selectedLi.classList.remove('selected');
-        selectedLi = null;      // resettare variabile
-        selectedId = null;      // resettare id selezionato
+        selectedLi = null;
+        selectedId = null;
     }    
     /* Aggiorna pulsante delete: disabilitato se non c'è selezione */
-    updateDeleteButton(null);    
+    /* updateDeleteButton(null); -----------da cancellare */  
     /* Ricarica tutta la lista senza filtro */
     renderCategories(categories);
   });
