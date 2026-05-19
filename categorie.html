@@ -372,11 +372,20 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   input.addEventListener('input', () => {
     toggleClear(); /* Mostra/Nascone la X */
     const filtro = input.value.trim().toLowerCase();
+    /* Filtra le caterorie */
     const filtered = categories.filter(cat =>
     (cat.cat_descrizione || '').toLowerCase().includes(filtro) ||
     (cat.cat_note || '').toLowerCase().includes(filtro)
     );
+    // Rimuove evidenziazione riga selezionata
+    if (selectedLi) {
+        selectedLi.classList.remove('selected');
+        selectedLi = null;      // resettare variabile
+        selectedId = null;      // resettare id selezionato
+    }    
     renderCategories(filtered);
+    // Aggiorna pulsante delete: disabilitato se non c'è selezione
+    updateDeleteButton(null);    
   });
 
 /* Click sulla X per svuotare l'input */
