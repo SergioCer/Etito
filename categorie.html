@@ -384,10 +384,10 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
         selectedLi = null;      // resettare variabile
         selectedId = null;      // resettare id selezionato
     }    
-    /* Aggiorna pulsante delete: disabilitato se non c'è selezione */
-    updateDeleteButton(null);    
     /* Ricarica tutta la lista filtrata */
     renderCategories(filtered);
+    /* Aggiorna pulsante delete: disabilitato se non c'è selezione */
+    updateDeleteButton(null);    
   });
 
 /* Click sulla X per svuotare l'input */
@@ -408,7 +408,9 @@ document.querySelectorAll('.searchWrapper').forEach(wrapper => {
   });
 });
   
+  /* Carica inizialmente tutte le categorie */
   loadCategories();
+  
 </script>
 </body>
 </html>
