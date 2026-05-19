@@ -38,9 +38,9 @@ h2 {
 
 /* ------------------------ SEZIONI ------------------------ */
 section { 
-    padding: 20px; 
-    margin-bottom: 25px; 
-    border-radius: 10px; 
+    padding: 10px; 
+    margin-bottom: 15px; 
+    border-radius: 20px; 
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: transform 0.2s, box-shadow 0.2s;
 }
