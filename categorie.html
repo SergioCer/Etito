@@ -157,6 +157,8 @@ function renderCategories(list) {
     deleteBtn.textContent = 'Cancella';
     deleteBtn.classList.add('disabled');
     deleteBtn.disabled = true;
+    deleteBtn.style.backgroundColor = '#ccc'; /* grigio chiaro quando disabilitato */
+    deleteBtn.style.color = '#666'; /* testo grigio scuro */
     return;
   }
 
@@ -169,10 +171,14 @@ function renderCategories(list) {
         deleteBtn.textContent = 'NON Cancellabile';
         deleteBtn.classList.add('disabled');
         deleteBtn.disabled = true;
+        deleteBtn.style.backgroundColor = '#f44336'; /* rosso chiaro */
+        deleteBtn.style.color = '#fff'; /* testo bianco */
       } else {
         deleteBtn.textContent = 'Cancella';
         deleteBtn.classList.remove('disabled');
         deleteBtn.disabled = false;
+        deleteBtn.style.backgroundColor = '#4CAF50'; /* verde */
+        deleteBtn.style.color = '#fff'; /* testo bianco */
       }
     });
 }
