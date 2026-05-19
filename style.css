@@ -187,12 +187,12 @@ ul#categoryList li span.note {
 }
 
 ul#categoryList li span.desc {
-    flex: 0 0 60%;
+    flex: 0 0 55%;
     border-right: 1px solid #ccc;
 }
 
 ul#categoryList li span.note {
-    flex: 0 0 40%;
+    flex: 0 0 45%;
     margin: 0 10px;
 }
 
