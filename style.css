@@ -117,7 +117,7 @@ input, select, button, textarea {
 
 /* Pulsanti generali */
 button { 
-    background-color: #4CAF50; 
+    /* background-color: #4CAF50;  --> DA ELIMINARE */ 
     color: white; 
     border: none; 
     cursor: pointer; 
