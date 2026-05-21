@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Aroundo - Live Territory</title>
+  <title>Aroundo - Territory Map</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <style>
     body {
       margin: 0;
-      font-family: system-ui, sans-serif;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
       background: #f4f1ea;
     }
 
@@ -17,34 +18,39 @@
       width: 100%;
     }
 
-    /* marker base animato */
-    .pulse {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      position: relative;
-    }
-
-    .pulse::after {
-      content: "";
+    /* Piccolo overlay futuro per atmosfera */
+    .map-overlay {
       position: absolute;
-      top: -8px;
-      left: -8px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      animation: pulse 1.8s infinite;
-      opacity: 0.5;
+      top: 15px;
+      left: 15px;
+      z-index: 999;
+      background: rgba(255,255,255,0.85);
+      padding: 10px 14px;
+      border-radius: 12px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     }
 
-    @keyframes pulse {
-      0% { transform: scale(0.6); opacity: 0.6; }
-      100% { transform: scale(1.4); opacity: 0; }
+    .title {
+      font-weight: 600;
+      font-size: 14px;
+      color: #3f3f3f;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #6b6b6b;
+      margin-top: 2px;
     }
   </style>
 </head>
 
 <body>
+
+<div class="map-overlay">
+  <div class="title">Aroundo</div>
+  <div class="subtitle">Discover what’s around you</div>
+</div>
 
 <div id="map"></div>
 
@@ -52,99 +58,39 @@
 
 <script>
 
-const map = L.map('map').setView([37.8, 12.6], 9);
+  // Centro: Sicilia occidentale (coerente con il tuo esempio)
+  const map = L.map('map', {
+    zoomControl: true
+  }).setView([37.8, 12.6], 9);
 
-L.tileLayer(
-  'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  {
-    attribution: '&copy; OpenStreetMap & CARTO'
-  }
-).addTo(map);
+  // 🌿 Base map più calda (meno grigia)
+  L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    {
+      attribution: '&copy; OpenStreetMap & CARTO',
+      subdomains: 'abcd',
+      maxZoom: 19
+    }
+  ).addTo(map);
 
----
-
-# 🎨 ICON SET PER CATEGORIE
-
-function createIcon(color) {
-  return L.divIcon({
-    className: '',
-    html: `<div class="pulse" style="background:${color}; box-shadow:0 0 12px ${color};"></div>`,
-    iconSize: [20, 20]
+  // 🎯 ESEMPIO: marker evento (placeholder)
+  const eventIcon = L.divIcon({
+    className: 'event-marker',
+    html: `
+      <div style="
+        width:12px;
+        height:12px;
+        background:#ff6b6b;
+        border-radius:50%;
+        box-shadow:0 0 0 6px rgba(255,107,107,0.15);
+      "></div>
+    `,
+    iconSize: [12, 12]
   });
-}
 
----
-
-# 🎭 CATEGORIE (colori semantici Aroundo)
-
-const icons = {
-  music: createIcon("#ff4d6d"),        // rosso energia
-  food: createIcon("#ffb703"),         // caldo food
-  culture: createIcon("#8ecae6"),      // culturale/mare
-  sport: createIcon("#06d6a0"),        // verde energia
-  nightlife: createIcon("#8338ec"),    // viola notte
-  family: createIcon("#f4a261"),       // soft arancio
-  outdoor: createIcon("#52b788"),      // natura
-};
-
----
-
-# 📍 EVENTI SPAZIATI (mock realistico Sicilia occidentale)
-
-const events = [
-  {
-    name: "Live Jazz Night",
-    lat: 38.0176,
-    lng: 12.5365,
-    type: "music"
-  },
-  {
-    name: "Street Food Festival",
-    lat: 37.9676,
-    lng: 12.7481,
-    type: "food"
-  },
-  {
-    name: "Museum Exhibition",
-    lat: 37.7933,
-    lng: 12.4389,
-    type: "culture"
-  },
-  {
-    name: "Beach Yoga Session",
-    lat: 37.9330,
-    lng: 12.8700,
-    type: "sport"
-  },
-  {
-    name: "Night DJ Set",
-    lat: 37.8030,
-    lng: 12.4470,
-    type: "nightlife"
-  },
-  {
-    name: "Kids Playground Event",
-    lat: 37.8900,
-    lng: 12.6500,
-    type: "family"
-  },
-  {
-    name: "Outdoor Trekking Group",
-    lat: 38.0500,
-    lng: 12.6200,
-    type: "outdoor"
-  }
-];
-
----
-
-# 🧠 RENDER MARKERS
-
-events.forEach(e => {
-  L.marker([e.lat, e.lng], { icon: icons[e.type] })
+  L.marker([38.0176, 12.5365], { icon: eventIcon })
     .addTo(map)
-    .bindPopup(`<b>${e.name}</b>`);
-});
+    .bindPopup("Example Event: Live Music");
 
 </script>
 
