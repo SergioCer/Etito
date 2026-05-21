@@ -63,10 +63,16 @@
       opacity: 0.5;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(0.6); opacity: 0.6; }
-      100% { transform: scale(1.4); opacity: 0; }
-    }
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
     
   </style>
 </head>
@@ -104,7 +110,33 @@
 function createIcon(color) {
   return L.divIcon({
     className: '',
-    html: `<div class="pulse" style="background:${color}; box-shadow:0 0 12px ${color};"></div>`,
+    html: `
+      <div style="
+        position: relative;
+        width: 14px;
+        height: 14px;
+      ">
+        <div style="
+          width: 14px;
+          height: 14px;
+          background: ${color};
+          border-radius: 50%;
+          position: absolute;
+          z-index: 2;
+        "></div>
+
+        <div style="
+          width: 14px;
+          height: 14px;
+          background: ${color};
+          border-radius: 50%;
+          position: absolute;
+          z-index: 1;
+          animation: pulse 1.8s infinite;
+          opacity: 0.6;
+        "></div>
+      </div>
+    `,
     iconSize: [20, 20]
   });
 }
