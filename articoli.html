@@ -111,7 +111,7 @@ function createIcon(color) {
 
 ---
 
-# 🎭 CATEGORIE (colori semantici Aroundo)
+// 🎭 CATEGORIE (colori semantici Aroundo)
 
 const icons = {
   music: createIcon("#ff4d6d"),        // rosso energia
@@ -125,7 +125,7 @@ const icons = {
 
 ---
 
-# 📍 EVENTI SPAZIATI (mock realistico Sicilia occidentale)
+// 📍 EVENTI SPAZIATI (mock realistico Sicilia occidentale)
 
 const events = [
   {
@@ -174,7 +174,7 @@ const events = [
 
 ---
 
-# 🧠 RENDER MARKERS
+// RENDER MARKERS
 
 events.forEach(e => {
   L.marker([e.lat, e.lng], { icon: icons[e.type] })
