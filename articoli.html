@@ -6,6 +6,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <style>
+    .leaflet-left {
+    right: 0;
+}
     body {
       margin: 0;
       padding: 0;
@@ -219,6 +222,8 @@ events.forEach(e => {
     .addTo(map)
     .bindPopup(`<b>${e.name}</b>`);
 });
+
+  
 
 </script>
 
