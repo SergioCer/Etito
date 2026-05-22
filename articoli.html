@@ -55,7 +55,7 @@
 
     .pulse::before,
     .pulse::after {
-      content: "Ciao";
+      content: "";
       position: absolute;
       top: -8px;
       left: -8px;
@@ -65,7 +65,15 @@
       animation: pulse 1.8s infinite;
       opacity: 0.5;
     }
-
+      .pulse-marker::before {
+      z-index: 2;
+    }
+      .pulse-marker::after {
+      z-index: 1;
+      opacity: .6;
+      animation: pulse 1.8s infinite;
+    }
+    
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -116,24 +124,16 @@ function createIcon(color) {
     html: `
       <div style="
         position: relative;
-        width: 14px;
-        height: 14px;
       ">
         <div style="
-          width: 14px;
-          height: 14px;
           background: ${color};
           border-radius: 50%;
-          position: absolute;
           z-index: 2;
         "></div>
 
         <div style="
-          width: 14px;
-          height: 14px;
           background: ${color};
           border-radius: 50%;
-          position: absolute;
           z-index: 1;
           animation: pulse 1.8s infinite;
           opacity: 0.6;
