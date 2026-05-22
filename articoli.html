@@ -54,19 +54,12 @@
       background: inherit;
     }
 
-    .pulse::before,
     .pulse::after {
       content: "";
       position: absolute;
-      top: -8px;
-      left: -8px;
-      width: 28px;
-      height: 28px;
+      inset: 0;
       border-radius: 50%;
       background: inherit; /* <-- importante */
-    }
-      .pulse::before {
-      z-index: 2;
     }
       .pulse::after {
       z-index: 1;
